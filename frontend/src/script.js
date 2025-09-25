@@ -18,9 +18,13 @@ let nextBebidaId = 102;
 
 
 // ==============================================
-// LÓGICA DE NAVEGAÇÃO POR ABAS
+// LÓGICA DE NAVEGAÇÃO E EXIBIÇÃO DE FORMULÁRIOS
 // ==============================================
 
+const bebidaFormContainer = document.getElementById('bebida-form-container');
+const fornecedorFormContainer = document.getElementById('fornecedor-form-container');
+
+// Gerencia a troca de abas
 function openTab(tabName) {
   let tabcontent, tablinks;
 
@@ -37,11 +41,45 @@ function openTab(tabName) {
   document.getElementById(tabName).classList.add("active");
   document.querySelector(`.tab-button[data-tab="${tabName}"]`).classList.add("active");
   
+  // Esconde qualquer formulário que possa estar aberto ao trocar de aba
+  hideBebidaForm(true); 
+  hideFornecedorForm(true); 
+
   // Recarrega os dados da aba ativa
   if (tabName === 'fornecedor') {
       loadFornecedores();
   } else if (tabName === 'bebida') {
       loadBebidas();
+  }
+}
+
+// Funções para Bebida
+function showBebidaForm() {
+  bebidaFormContainer.style.display = 'block';
+  document.querySelector('#bebida').querySelector('.add-new-btn').style.display = 'none';
+  document.getElementById('nome').focus();
+}
+
+function hideBebidaForm(silent = false) {
+  resetBebidaForm();
+  bebidaFormContainer.style.display = 'none';
+  if (!silent) {
+      document.querySelector('#bebida').querySelector('.add-new-btn').style.display = 'block';
+  }
+}
+
+// Funções para Fornecedor
+function showFornecedorForm() {
+  fornecedorFormContainer.style.display = 'block';
+  document.querySelector('#fornecedor').querySelector('.add-new-btn').style.display = 'none';
+  document.getElementById('fornecedorNome').focus();
+}
+
+function hideFornecedorForm(silent = false) {
+  resetFornecedorForm();
+  fornecedorFormContainer.style.display = 'none';
+  if (!silent) {
+      document.querySelector('#fornecedor').querySelector('.add-new-btn').style.display = 'block';
   }
 }
 
@@ -54,7 +92,6 @@ const fornecedorForm = document.getElementById('fornecedorForm');
 const fornecedoresList = document.getElementById('fornecedoresList');
 const fornecedorIdInput = document.getElementById('fornecedorId');
 const submitFornecedorBtn = document.getElementById('submitFornecedorBtn');
-const cancelFornecedorBtn = document.getElementById('cancelFornecedorBtn');
 
 // READ: Carrega e exibe a lista de fornecedores
 function loadFornecedores() {
@@ -114,8 +151,9 @@ fornecedorForm.addEventListener('submit', function(event) {
       nextFornecedorId++;
   }
 
-  resetFornecedorForm();
+  hideFornecedorForm(); // Esconde após salvar
   loadFornecedores();
+  loadBebidas(); // Recarrega Bebidas para atualizar nomes de fornecedores na lista
 });
 
 // UPDATE (Parte 2): Preenche o formulário para edição
@@ -127,9 +165,9 @@ function editFornecedor(id) {
   document.getElementById('fornecedorNome').value = fornecedor.nome;
   document.getElementById('fornecedorCnpj').value = fornecedor.cnpj;
   
+  showFornecedorForm(); // Mostra o formulário
   submitFornecedorBtn.textContent = 'Atualizar Fornecedor';
   submitFornecedorBtn.style.backgroundColor = '#ffc107'; 
-  cancelFornecedorBtn.style.display = 'inline-block';
 }
 
 // DELETE: Exclui o fornecedor
@@ -143,6 +181,7 @@ function deleteFornecedor(id) {
   if (confirm(`Tem certeza que deseja excluir o fornecedor com ID ${id}?`)) {
       fornecedores = fornecedores.filter(f => f.id !== id);
       loadFornecedores();
+      loadBebidas(); // Recarrega para refletir a exclusão na lista de bebidas (mostrar 'Excluído')
   }
 }
 
@@ -152,10 +191,7 @@ function resetFornecedorForm() {
   fornecedorIdInput.value = '';
   submitFornecedorBtn.textContent = 'Salvar Fornecedor';
   submitFornecedorBtn.style.backgroundColor = '#28a745';
-  cancelFornecedorBtn.style.display = 'none';
 }
-
-cancelFornecedorBtn.addEventListener('click', resetFornecedorForm);
 
 
 // ==============================================
@@ -165,7 +201,6 @@ cancelFornecedorBtn.addEventListener('click', resetFornecedorForm);
 const bebidaForm = document.getElementById('bebidaForm');
 const bebidasList = document.getElementById('bebidasList');
 const submitBtn = document.getElementById('submitBtn');
-const cancelBtn = document.getElementById('cancelBtn');
 const bebidaIdInput = document.getElementById('bebidaId');
 
 // Preenche o <select> de Fornecedores (Chave Estrangeira)
@@ -194,7 +229,7 @@ function loadBebidas() {
       const row = bebidasList.insertRow();
       
       const fornecedor = fornecedores.find(f => f.id === bebida.codigoFornecedorFk);
-      const nomeFornecedor = fornecedor ? fornecedor.nome : 'FORNECEDOR EXCLUÍDO';
+      const nomeFornecedor = fornecedor ? fornecedor.nome : 'FORNECEDOR EXCLUÍDO (ID: ' + bebida.codigoFornecedorFk + ')';
       
       row.insertCell().textContent = bebida.codigo;
       row.insertCell().textContent = bebida.nome;
@@ -253,7 +288,7 @@ bebidaForm.addEventListener('submit', function(event) {
       nextBebidaId++;
   }
 
-  resetBebidaForm();
+  hideBebidaForm(); // Esconde após salvar
   loadBebidas();
 });
 
@@ -269,12 +304,11 @@ function editBebida(codigo) {
   document.getElementById('marcaId').value = bebida.marcaFk;
   document.getElementById('tipoId').value = bebida.tipoFk;
   
-  // Seleciona a opção correta no <select>
   document.getElementById('fornecedorFk').value = bebida.codigoFornecedorFk;
   
+  showBebidaForm(); // Mostra o formulário
   submitBtn.textContent = 'Atualizar Bebida';
   submitBtn.style.backgroundColor = '#ffc107'; 
-  cancelBtn.style.display = 'inline-block';
 }
 
 // DELETE: Exclui a bebida
@@ -291,18 +325,21 @@ function resetBebidaForm() {
   bebidaIdInput.value = '';
   submitBtn.textContent = 'Salvar Bebida';
   submitBtn.style.backgroundColor = '#28a745';
-  cancelBtn.style.display = 'none';
 }
 
-cancelBtn.addEventListener('click', resetBebidaForm);
 
 // ==============================================
 // Inicialização
 // ==============================================
 
-// Inicializa o sistema abrindo a aba 'bebida'
+// Inicializa o sistema abrindo a aba 'bebida' e carregando os dados
 window.onload = function() {
-  openTab('bebida'); 
-  loadFornecedores(); // Garante que o array de fornecedores e o select estejam prontos
+  // Carrega os dados de fornecedores e bebidas inicialmente
+  loadFornecedores(); 
   loadBebidas();
+  
+  // Abre a aba Bebidas e esconde o formulário
+  openTab('bebida'); 
+  hideBebidaForm(true); // Garante que o formulário de bebida está escondido
+  hideFornecedorForm(true); // Garante que o formulário de fornecedor está escondido
 }

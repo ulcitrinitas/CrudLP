@@ -1,19 +1,50 @@
 let bebidas = JSON.parse(localStorage.getItem('bebidas')) || [];
 let fornecedores = JSON.parse(localStorage.getItem('fornecedores')) || [];
 
-document.getElementById('btnAddFornecedor').onclick = () => abrirModal('modalFornecedor');
-document.getElementById('btnAddBebida').onclick = () => abrirModal('modalBebida');
+document.getElementById('btnAddFornecedor').onclick = () => abrirModalFornecedor();
+document.getElementById('btnAddBebida').onclick = () => abrirModalBebida();
 document.getElementById('filter').onchange = exibirTabela;
 
-function abrirModal(id) {
-  document.getElementById(id).style.display = 'block';
+// ==== MODAIS ====
+function abrirModalFornecedor(f = null) {
+  document.getElementById('modalFornecedor').style.display = 'block';
+  if (f) {
+    document.getElementById('tituloFornecedor').innerText = 'Editar Fornecedor';
+    document.getElementById('fornecedorId').value = f.id;
+    document.getElementById('fornecedorNome').value = f.nome;
+    document.getElementById('fornecedorCNPJ').value = f.cnpj;
+    document.getElementById('fornecedorTelefone').value = f.telefone;
+    document.getElementById('fornecedorEndereco').value = f.endereco;
+  } else {
+    document.getElementById('tituloFornecedor').innerText = 'Novo Fornecedor';
+    document.querySelectorAll('#modalFornecedor input').forEach(i => i.value = '');
+  }
+}
+
+function abrirModalBebida(b = null) {
+  document.getElementById('modalBebida').style.display = 'block';
+  if (b) {
+    document.getElementById('tituloBebida').innerText = 'Editar Bebida';
+    document.getElementById('bebidaId').value = b.id;
+    document.getElementById('bebidaNome').value = b.nome;
+    document.getElementById('bebidaQtde').value = b.qtde;
+    document.getElementById('bebidaPreco').value = b.preco;
+    document.getElementById('bebidaVolume').value = b.volume;
+    document.getElementById('bebidaMarca').value = b.marca;
+    document.getElementById('bebidaFornecedor').value = b.id_fornecedor;
+  } else {
+    document.getElementById('tituloBebida').innerText = 'Nova Bebida';
+    document.querySelectorAll('#modalBebida input').forEach(i => i.value = '');
+  }
 }
 
 function fecharModal(id) {
   document.getElementById(id).style.display = 'none';
 }
 
+// ==== SALVAR FORNECEDOR ====
 function salvarFornecedor() {
+  const id = document.getElementById('fornecedorId').value;
   const nome = document.getElementById('fornecedorNome').value;
   const cnpj = document.getElementById('fornecedorCNPJ').value;
   const telefone = document.getElementById('fornecedorTelefone').value;
@@ -21,15 +52,23 @@ function salvarFornecedor() {
 
   if (!nome) return alert('Preencha o nome!');
 
-  const novo = { id: Date.now(), nome, cnpj, telefone, endereco };
-  fornecedores.push(novo);
-  localStorage.setItem('fornecedores', JSON.stringify(fornecedores));
+  if (id) {
+    // Editar
+    const index = fornecedores.findIndex(f => f.id == id);
+    fornecedores[index] = { id: Number(id), nome, cnpj, telefone, endereco };
+  } else {
+    // Novo
+    fornecedores.push({ id: Date.now(), nome, cnpj, telefone, endereco });
+  }
 
+  localStorage.setItem('fornecedores', JSON.stringify(fornecedores));
   fecharModal('modalFornecedor');
   exibirTabela();
 }
 
+// ==== SALVAR BEBIDA ====
 function salvarBebida() {
+  const id = document.getElementById('bebidaId').value;
   const nome = document.getElementById('bebidaNome').value;
   const qtde = document.getElementById('bebidaQtde').value;
   const preco = document.getElementById('bebidaPreco').value;
@@ -39,25 +78,33 @@ function salvarBebida() {
 
   if (!nome) return alert('Preencha o nome!');
 
-  const nova = { id: Date.now(), nome, qtde, preco, volume, marca, id_fornecedor };
-  bebidas.push(nova);
-  localStorage.setItem('bebidas', JSON.stringify(bebidas));
+  if (id) {
+    const index = bebidas.findIndex(b => b.id == id);
+    bebidas[index] = { id: Number(id), nome, qtde, preco, volume, marca, id_fornecedor };
+  } else {
+    bebidas.push({ id: Date.now(), nome, qtde, preco, volume, marca, id_fornecedor });
+  }
 
+  localStorage.setItem('bebidas', JSON.stringify(bebidas));
   fecharModal('modalBebida');
   exibirTabela();
 }
 
+// ==== EXCLUIR ====
 function excluir(id, tipo) {
-  if (tipo === 'bebida') {
-    bebidas = bebidas.filter(b => b.id !== id);
-    localStorage.setItem('bebidas', JSON.stringify(bebidas));
-  } else {
-    fornecedores = fornecedores.filter(f => f.id !== id);
-    localStorage.setItem('fornecedores', JSON.stringify(fornecedores));
+  if (confirm('Deseja realmente excluir?')) {
+    if (tipo === 'bebida') {
+      bebidas = bebidas.filter(b => b.id !== id);
+      localStorage.setItem('bebidas', JSON.stringify(bebidas));
+    } else {
+      fornecedores = fornecedores.filter(f => f.id !== id);
+      localStorage.setItem('fornecedores', JSON.stringify(fornecedores));
+    }
+    exibirTabela();
   }
-  exibirTabela();
 }
 
+// ==== EXIBIR TABELAS ====
 function exibirTabela() {
   const filtro = document.getElementById('filter').value;
   let html = "<table><thead><tr>";
@@ -68,7 +115,10 @@ function exibirTabela() {
       html += `<tr>
         <td>${b.id}</td><td>${b.nome}</td><td>${b.qtde}</td>
         <td>${b.preco}</td><td>${b.volume}</td><td>${b.marca}</td><td>${b.id_fornecedor}</td>
-        <td><button onclick="excluir(${b.id}, 'bebida')">Excluir</button></td>
+        <td>
+          <button onclick='abrirModalBebida(${JSON.stringify(b)})'>Editar</button>
+          <button onclick='excluir(${b.id}, "bebida")'>Excluir</button>
+        </td>
       </tr>`;
     });
   } else if (filtro === 'fornecedores') {
@@ -76,7 +126,10 @@ function exibirTabela() {
     fornecedores.forEach(f => {
       html += `<tr>
         <td>${f.id}</td><td>${f.nome}</td><td>${f.cnpj}</td><td>${f.telefone}</td><td>${f.endereco}</td>
-        <td><button onclick="excluir(${f.id}, 'fornecedor')">Excluir</button></td>
+        <td>
+          <button onclick='abrirModalFornecedor(${JSON.stringify(f)})'>Editar</button>
+          <button onclick='excluir(${f.id}, "fornecedor")'>Excluir</button>
+        </td>
       </tr>`;
     });
   } else {
@@ -94,5 +147,5 @@ function exibirTabela() {
   document.getElementById('tabelaContainer').innerHTML = html;
 }
 
-// Carregar tabela inicial
+// ==== INICIALIZAÇÃO ====
 exibirTabela();

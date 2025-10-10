@@ -27,7 +27,8 @@
     <!-- Modal Fornecedor -->
     <div id="modalFornecedor" class="modal">
         <div class="modal-content">
-            <h2>Novo Fornecedor</h2>
+            <h2 id="tituloFornecedor">Novo Fornecedor</h2>
+            <input type="hidden" id="fornecedorId">
             <label>Nome:</label>
             <input type="text" id="fornecedorNome">
             <label>CNPJ:</label>
@@ -44,7 +45,8 @@
     <!-- Modal Bebida -->
     <div id="modalBebida" class="modal">
         <div class="modal-content">
-            <h2>Nova Bebida</h2>
+            <h2 id="tituloBebida">Nova Bebida</h2>
+            <input type="hidden" id="bebidaId">
             <label>Nome:</label>
             <input type="text" id="bebidaNome">
             <label>Quantidade:</label>
@@ -55,7 +57,7 @@
             <input type="text" id="bebidaVolume">
             <label>Marca:</label>
             <input type="text" id="bebidaMarca">
-            <label>Fornecedor (ID):</label>
+            <label>ID Fornecedor:</label>
             <input type="number" id="bebidaFornecedor">
             <button onclick="salvarBebida()">Salvar</button>
             <button onclick="fecharModal('modalBebida')">Cancelar</button>

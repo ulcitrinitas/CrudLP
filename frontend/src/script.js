@@ -23,6 +23,17 @@ function abrirModalFornecedor(f = null) {
 
 function abrirModalBebida(b = null) {
   document.getElementById('modalBebida').style.display = 'block';
+
+  // Preenche o select de fornecedores
+  const select = document.getElementById('bebidaFornecedor');
+  select.innerHTML = '<option value="">Selecione um fornecedor</option>';
+  fornecedores.forEach(f => {
+    const opt = document.createElement('option');
+    opt.value = f.id;
+    opt.textContent = f.nome;
+    select.appendChild(opt);
+  });
+
   if (b) {
     document.getElementById('tituloBebida').innerText = 'Editar Bebida';
     document.getElementById('bebidaId').value = b.id;
@@ -35,8 +46,10 @@ function abrirModalBebida(b = null) {
   } else {
     document.getElementById('tituloBebida').innerText = 'Nova Bebida';
     document.querySelectorAll('#modalBebida input').forEach(i => i.value = '');
+    select.value = '';
   }
 }
+
 
 function fecharModal(id) {
   document.getElementById(id).style.display = 'none';

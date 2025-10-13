@@ -1,3 +1,5 @@
+CREATE DATABASE lp_crud;
+
 USE lp_crud;
 
 /* DROP TABLE Bebida;
@@ -6,6 +8,7 @@ DROP TABLE Marca;
 DROP TABLE Fornecedor;
 DROP TABLE Endereco;
  */
+
 CREATE TABLE
     Endereco (
         codigo_end INT AUTO_INCREMENT PRIMARY KEY,
@@ -58,3 +61,5 @@ CREATE TABLE
         FOREIGN KEY (volume_med) REFERENCES Medida (med_cod),
         FOREIGN KEY (forn_cod) REFERENCES Fornecedor (id)
     );
+
+SHOW TABLES;

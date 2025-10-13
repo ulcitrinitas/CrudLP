@@ -67,7 +67,33 @@ th {
   border-radius: 8px;
   /* Largura ajustada para acomodar o Grid */
   width: 500px;
+  position: relative;
 }
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  font-weight: bold;
+  color: #aaa;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.close-button:hover .close-button:focus {
+  color: #333;
+  text-decoration: none;
+  outline: none;
+}
+
+.modal-content h2 {
+  margin-top: 5px;
+}
+
 
 /* NOVO: Estilos para o formulário com Grid Layout */
 .modal-content form {

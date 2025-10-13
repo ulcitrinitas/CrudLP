@@ -30,6 +30,8 @@
 
         <div id="modalFornecedor" class="modal" role="dialog" aria-labelledby="tituloFornecedor">
             <article class="modal-content">
+                <button class="close-button" onclick="fecharModal('modalFornecedor')" aria-label="Fechar"> &times;
+                </button>
                 <h2 id="tituloFornecedor">Novo Fornecedor</h2>
                 <form onsubmit="event.preventDefault(); salvarFornecedor();">
                     <input type="hidden" id="fornecedorId">
@@ -70,6 +72,8 @@
 
         <div id="modalBebida" class="modal" role="dialog" aria-labelledby="tituloBebida">
             <article class="modal-content">
+                <button class="close-button" onclick="fecharModal('modalBebida')" aria-label="Fechar"> &times;
+                </button>
                 <h2 id="tituloBebida">Nova Bebida</h2>
                 <form onsubmit="event.preventDefault(); salvarBebida();">
                     <input type="hidden" id="bebidaId">

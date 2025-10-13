@@ -162,11 +162,11 @@ function exibirTabela() {
 
   if (filtro === 'bebidas') {
     // ID removido
-    html += "<th>Nome</th><th>Qtde</th><th>Preço</th><th>Volume</th><th>Marca</th><th>ID Fornecedor</th><th>Ações</th></tr></thead><tbody>";
-    bebidas.forEach(b => {
+    html += "<th>Nome</th><th>Qtde</th><th>Preço</th><th>Volume</th><th>Marca</th><th>Fornecedor</th><th>Ações</th></tr></thead><tbody>";
+    bebidas.forEach((b, i) => {
       html += `<tr>
         <td>${b.nome}</td><td>${b.qtde}</td>
-        <td>${b.preco}</td><td>${b.volume}</td><td>${b.marca}</td><td>${b.id_fornecedor}</td>
+        <td>${b.preco}</td><td>${b.volume}</td><td>${b.marca}</td><td>${fornecedores[i].nome}</td>
         <td>
           <button onclick='abrirModalBebida(${JSON.stringify(b)})'>Editar</button>
           <button onclick='excluir(${b.id}, "bebida")'>Excluir</button>

@@ -189,12 +189,12 @@ function exibirTabela() {
     });
   } else {
     // ID Bebida removido
-    html += "<th>Nome Bebida</th><th>Marca</th><th>Fornecedor</th><th>CNPJ</th></tr></thead><tbody>";
+    html += "<th>Nome Bebida</th><th>Marca</th><th>Fornecedor</th><th>Telefone</th></tr></thead><tbody>";
     bebidas.forEach(b => {
       const forn = fornecedores.find(f => f.id == b.id_fornecedor);
       html += `<tr>
         <td>${b.nome}</td><td>${b.marca}</td>
-        <td>${forn ? forn.nome : 'N/A'}</td><td>${forn ? forn.cnpj : '-'}</td>
+        <td>${forn ? forn.nome : 'N/A'}</td><td>${forn ? forn.telefone : '-'}</td>
       </tr>`;
     });
   }

@@ -33,12 +33,11 @@ INSERT INTO Bebida (beb_nome, qtde, preco_uni, volume, tipo, volume_med, forn_co
 
 SELECT * FROM beb_info;
 
-DROP VIEW beb_info;
-
+CREATE OR REPLACE VIEW beb_info as 
 SELECT beb_nome, qtde, preco_uni, tipo, volume, me.sigla as medida, f.nome as fornecedor, m.nome as marca
 FROM Bebida as b
-LEFT JOIN Fornecedor f ON b.beb_cod = f.id
-LEFT JOIN Marca m ON b.marca_cod = m.marca_cod
-LEFT JOIN Medida me ON b.volume_med = me.med_cod;
+JOIN Fornecedor f ON b.beb_cod = f.id
+JOIN Marca m ON b.marca_cod = m.marca_cod
+JOIN Medida me ON b.volume_med = me.med_cod;
 
-DELETE FROM Bebida;
+SELECT * FROM beb_info;

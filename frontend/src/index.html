@@ -60,10 +60,11 @@
 
                     <label for="fornecedorPais">País:</label>
                     <input type="text" id="fornecedorPais">
-
-                    <button type="submit">Salvar</button>
                 </form>
-                <button onclick="fecharModal('modalFornecedor')">Cancelar</button>
+                <div class="modal-actions" id="action-forn">
+                    <button type="submit" onclick="salvarFornecedor()">Salvar</button>
+                    <button onclick="fecharModal('modalFornecedor')">Cancelar</button>
+                </div>
             </article>
         </div>
 
@@ -92,10 +93,11 @@
                     <select id="bebidaFornecedor">
                         <option value="">Selecione um fornecedor</option>
                     </select>
-
-                    <button type="submit">Salvar</button>
                 </form>
-                <button onclick="fecharModal('modalBebida')">Cancelar</button>
+                <div class="modal-actions" id="actions-beb">
+                    <button type="submit" onclick="salvarBebida()">Salvar</button>
+                    <button onclick=" fecharModal('modalBebida')">Cancelar</button>
+                </div>
             </article>
         </div>
     </main>

@@ -92,6 +92,13 @@ th {
   border-radius: 4px;
 }
 
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
 /* Estilo para os botões de ação do modal (manterão a disposição padrão, mas podemos centralizar abaixo do grid) */
 .modal-content button {
   /* Opcional: Para mover os botões para a parte de baixo, fora do grid, e centralizar */

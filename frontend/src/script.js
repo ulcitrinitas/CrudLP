@@ -8,21 +8,21 @@ document.getElementById('filter').onchange = exibirTabela;
 // ==== MODAIS ====
 function abrirModalFornecedor(f = null) {
   document.getElementById('modalFornecedor').style.display = 'block';
+
+  // O ID é guardado no objeto, mas não é mais exibido
+  document.getElementById('fornecedorId').value = f ? f.id : ''; // Mantemos o campo hidden para a lógica de salvamento
+
   if (f) {
     document.getElementById('tituloFornecedor').innerText = 'Editar Fornecedor';
-    document.getElementById('fornecedorId').value = f.id;
     document.getElementById('fornecedorNome').value = f.nome;
     document.getElementById('fornecedorCNPJ').value = f.cnpj;
     document.getElementById('fornecedorTelefone').value = f.telefone;
-
-    // Novos campos de endereço para edição
     document.getElementById('fornecedorCEP').value = f.cep || '';
     document.getElementById('fornecedorLogradouro').value = f.logradouro || '';
     document.getElementById('fornecedorNumero').value = f.numero || '';
     document.getElementById('fornecedorCidade').value = f.cidade || '';
     document.getElementById('fornecedorUF').value = f.uf || '';
     document.getElementById('fornecedorPais').value = f.pais || '';
-
   } else {
     document.getElementById('tituloFornecedor').innerText = 'Novo Fornecedor';
     document.querySelectorAll('#modalFornecedor input').forEach(i => i.value = '');
@@ -31,6 +31,9 @@ function abrirModalFornecedor(f = null) {
 
 function abrirModalBebida(b = null) {
   document.getElementById('modalBebida').style.display = 'block';
+
+  // O ID é guardado no objeto, mas não é mais exibido
+  document.getElementById('bebidaId').value = b ? b.id : ''; // Mantemos o campo hidden para a lógica de salvamento
 
   // Preenche o select de fornecedores
   const select = document.getElementById('bebidaFornecedor');
@@ -44,7 +47,6 @@ function abrirModalBebida(b = null) {
 
   if (b) {
     document.getElementById('tituloBebida').innerText = 'Editar Bebida';
-    document.getElementById('bebidaId').value = b.id;
     document.getElementById('bebidaNome').value = b.nome;
     document.getElementById('bebidaQtde').value = b.qtde;
     document.getElementById('bebidaPreco').value = b.preco;
@@ -69,9 +71,6 @@ function salvarFornecedor() {
   const nome = document.getElementById('fornecedorNome').value;
   const cnpj = document.getElementById('fornecedorCNPJ').value;
   const telefone = document.getElementById('fornecedorTelefone').value;
-  // const endereco = document.getElementById('fornecedorEndereco').value; // Removido ou ignorado o campo antigo
-
-  // Novos campos
   const cep = document.getElementById('fornecedorCEP').value;
   const logradouro = document.getElementById('fornecedorLogradouro').value;
   const numero = document.getElementById('fornecedorNumero').value;
@@ -82,7 +81,7 @@ function salvarFornecedor() {
   if (!nome) return alert('Preencha o nome!');
 
   const novoFornecedor = {
-    id: id ? Number(id) : Date.now(),
+    id: id ? Number(id) : Date.now(), // Mantém o ID no objeto interno
     nome,
     cnpj,
     telefone,
@@ -120,11 +119,21 @@ function salvarBebida() {
 
   if (!nome) return alert('Preencha o nome!');
 
+  const novaBebida = {
+    id: id ? Number(id) : Date.now(), // Mantém o ID no objeto interno
+    nome,
+    qtde,
+    preco,
+    volume,
+    marca,
+    id_fornecedor
+  };
+
   if (id) {
     const index = bebidas.findIndex(b => b.id == id);
-    bebidas[index] = { id: Number(id), nome, qtde, preco, volume, marca, id_fornecedor };
+    bebidas[index] = novaBebida;
   } else {
-    bebidas.push({ id: Date.now(), nome, qtde, preco, volume, marca, id_fornecedor });
+    bebidas.push(novaBebida);
   }
 
   localStorage.setItem('bebidas', JSON.stringify(bebidas));
@@ -152,10 +161,11 @@ function exibirTabela() {
   let html = "<table><thead><tr>";
 
   if (filtro === 'bebidas') {
-    html += "<th>ID</th><th>Nome</th><th>Qtde</th><th>Preço</th><th>Volume</th><th>Marca</th><th>ID Fornecedor</th><th>Ações</th></tr></thead><tbody>";
+    // ID removido
+    html += "<th>Nome</th><th>Qtde</th><th>Preço</th><th>Volume</th><th>Marca</th><th>ID Fornecedor</th><th>Ações</th></tr></thead><tbody>";
     bebidas.forEach(b => {
       html += `<tr>
-        <td>${b.id}</td><td>${b.nome}</td><td>${b.qtde}</td>
+        <td>${b.nome}</td><td>${b.qtde}</td>
         <td>${b.preco}</td><td>${b.volume}</td><td>${b.marca}</td><td>${b.id_fornecedor}</td>
         <td>
           <button onclick='abrirModalBebida(${JSON.stringify(b)})'>Editar</button>
@@ -164,11 +174,11 @@ function exibirTabela() {
       </tr>`;
     });
   } else if (filtro === 'fornecedores') {
-    // Colunas atualizadas
-    html += "<th>ID</th><th>Nome</th><th>CNPJ</th><th>Telefone</th><th>CEP</th><th>Logradouro</th><th>Número</th><th>Cidade</th><th>UF</th><th>País</th><th>Ações</th></tr></thead><tbody>";
+    // ID removido
+    html += "<th>Nome</th><th>CNPJ</th><th>Telefone</th><th>CEP</th><th>Logradouro</th><th>Número</th><th>Cidade</th><th>UF</th><th>País</th><th>Ações</th></tr></thead><tbody>";
     fornecedores.forEach(f => {
       html += `<tr>
-        <td>${f.id}</td><td>${f.nome}</td><td>${f.cnpj}</td><td>${f.telefone}</td>
+        <td>${f.nome}</td><td>${f.cnpj}</td><td>${f.telefone}</td>
         <td>${f.cep || '-'}</td><td>${f.logradouro || '-'}</td><td>${f.numero || '-'}</td>
         <td>${f.cidade || '-'}</td><td>${f.uf || '-'}</td><td>${f.pais || '-'}</td>
         <td>
@@ -178,11 +188,12 @@ function exibirTabela() {
       </tr>`;
     });
   } else {
-    html += "<th>ID Bebida</th><th>Nome Bebida</th><th>Marca</th><th>Fornecedor</th><th>CNPJ</th></tr></thead><tbody>";
+    // ID Bebida removido
+    html += "<th>Nome Bebida</th><th>Marca</th><th>Fornecedor</th><th>CNPJ</th></tr></thead><tbody>";
     bebidas.forEach(b => {
       const forn = fornecedores.find(f => f.id == b.id_fornecedor);
       html += `<tr>
-        <td>${b.id}</td><td>${b.nome}</td><td>${b.marca}</td>
+        <td>${b.nome}</td><td>${b.marca}</td>
         <td>${forn ? forn.nome : 'N/A'}</td><td>${forn ? forn.cnpj : '-'}</td>
       </tr>`;
     });

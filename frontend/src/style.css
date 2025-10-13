@@ -65,11 +65,39 @@ th {
   margin: 10% auto;
   padding: 20px;
   border-radius: 8px;
-  width: 300px;
+  /* Largura ajustada para acomodar o Grid */
+  width: 500px;
 }
 
-.modal-content input {
-  width: 100%;
-  padding: 5px;
-  margin-bottom: 10px;
+/* NOVO: Estilos para o formulário com Grid Layout */
+.modal-content form {
+  display: grid;
+  /* Define duas colunas: a primeira automática (para o label) e a segunda com ênfase no preenchimento (para o input) */
+  grid-template-columns: auto 1fr;
+  gap: 10px 15px;
+  /* Espaçamento entre linhas e colunas */
+  align-items: center;
+  /* Alinha verticalmente os itens no centro */
+  margin-bottom: 15px;
 }
+
+/* Garante que os campos de entrada e seleção preencham a segunda coluna */
+.modal-content input,
+.modal-content select {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  /* Inclui padding e borda na largura total */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Estilo para os botões de ação do modal (manterão a disposição padrão, mas podemos centralizar abaixo do grid) */
+.modal-content button {
+  /* Opcional: Para mover os botões para a parte de baixo, fora do grid, e centralizar */
+  display: inline-block;
+  margin-top: 10px;
+}
+
+/* Opcional: Alinhar o botão Salvar à esquerda e o Cancelar à direita do modal, ou apenas centralizar.
+   Aqui, vou mantê-los alinhados em baixo. */

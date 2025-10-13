@@ -24,7 +24,6 @@
 
     <div id="tabelaContainer"></div>
 
-    <!-- Modal Fornecedor -->
     <div id="modalFornecedor" class="modal">
         <div class="modal-content">
             <h2 id="tituloFornecedor">Novo Fornecedor</h2>
@@ -35,14 +34,23 @@
             <input type="text" id="fornecedorCNPJ">
             <label>Telefone:</label>
             <input type="text" id="fornecedorTelefone">
-            <label>Endereço:</label>
-            <input type="text" id="fornecedorEndereco">
+            <label>CEP:</label>
+            <input type="text" id="fornecedorCEP">
+            <label>Logradouro:</label>
+            <input type="text" id="fornecedorLogradouro">
+            <label>Número:</label>
+            <input type="text" id="fornecedorNumero">
+            <label>Cidade:</label>
+            <input type="text" id="fornecedorCidade">
+            <label>UF:</label>
+            <input type="text" id="fornecedorUF">
+            <label>País:</label>
+            <input type="text" id="fornecedorPais">
             <button onclick="salvarFornecedor()">Salvar</button>
             <button onclick="fecharModal('modalFornecedor')">Cancelar</button>
         </div>
     </div>
 
-    <!-- Modal Bebida -->
     <div id="modalBebida" class="modal">
         <div class="modal-content">
             <h2 id="tituloBebida">Nova Bebida</h2>

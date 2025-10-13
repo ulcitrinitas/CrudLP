@@ -14,7 +14,15 @@ function abrirModalFornecedor(f = null) {
     document.getElementById('fornecedorNome').value = f.nome;
     document.getElementById('fornecedorCNPJ').value = f.cnpj;
     document.getElementById('fornecedorTelefone').value = f.telefone;
-    document.getElementById('fornecedorEndereco').value = f.endereco;
+
+    // Novos campos de endereço para edição
+    document.getElementById('fornecedorCEP').value = f.cep || '';
+    document.getElementById('fornecedorLogradouro').value = f.logradouro || '';
+    document.getElementById('fornecedorNumero').value = f.numero || '';
+    document.getElementById('fornecedorCidade').value = f.cidade || '';
+    document.getElementById('fornecedorUF').value = f.uf || '';
+    document.getElementById('fornecedorPais').value = f.pais || '';
+
   } else {
     document.getElementById('tituloFornecedor').innerText = 'Novo Fornecedor';
     document.querySelectorAll('#modalFornecedor input').forEach(i => i.value = '');
@@ -61,17 +69,38 @@ function salvarFornecedor() {
   const nome = document.getElementById('fornecedorNome').value;
   const cnpj = document.getElementById('fornecedorCNPJ').value;
   const telefone = document.getElementById('fornecedorTelefone').value;
-  const endereco = document.getElementById('fornecedorEndereco').value;
+  // const endereco = document.getElementById('fornecedorEndereco').value; // Removido ou ignorado o campo antigo
+
+  // Novos campos
+  const cep = document.getElementById('fornecedorCEP').value;
+  const logradouro = document.getElementById('fornecedorLogradouro').value;
+  const numero = document.getElementById('fornecedorNumero').value;
+  const cidade = document.getElementById('fornecedorCidade').value;
+  const uf = document.getElementById('fornecedorUF').value;
+  const pais = document.getElementById('fornecedorPais').value;
 
   if (!nome) return alert('Preencha o nome!');
+
+  const novoFornecedor = {
+    id: id ? Number(id) : Date.now(),
+    nome,
+    cnpj,
+    telefone,
+    cep,
+    logradouro,
+    numero,
+    cidade,
+    uf,
+    pais
+  };
 
   if (id) {
     // Editar
     const index = fornecedores.findIndex(f => f.id == id);
-    fornecedores[index] = { id: Number(id), nome, cnpj, telefone, endereco };
+    fornecedores[index] = novoFornecedor;
   } else {
     // Novo
-    fornecedores.push({ id: Date.now(), nome, cnpj, telefone, endereco });
+    fornecedores.push(novoFornecedor);
   }
 
   localStorage.setItem('fornecedores', JSON.stringify(fornecedores));
@@ -135,10 +164,13 @@ function exibirTabela() {
       </tr>`;
     });
   } else if (filtro === 'fornecedores') {
-    html += "<th>ID</th><th>Nome</th><th>CNPJ</th><th>Telefone</th><th>Endereço</th><th>Ações</th></tr></thead><tbody>";
+    // Colunas atualizadas
+    html += "<th>ID</th><th>Nome</th><th>CNPJ</th><th>Telefone</th><th>CEP</th><th>Logradouro</th><th>Número</th><th>Cidade</th><th>UF</th><th>País</th><th>Ações</th></tr></thead><tbody>";
     fornecedores.forEach(f => {
       html += `<tr>
-        <td>${f.id}</td><td>${f.nome}</td><td>${f.cnpj}</td><td>${f.telefone}</td><td>${f.endereco}</td>
+        <td>${f.id}</td><td>${f.nome}</td><td>${f.cnpj}</td><td>${f.telefone}</td>
+        <td>${f.cep || '-'}</td><td>${f.logradouro || '-'}</td><td>${f.numero || '-'}</td>
+        <td>${f.cidade || '-'}</td><td>${f.uf || '-'}</td><td>${f.pais || '-'}</td>
         <td>
           <button onclick='abrirModalFornecedor(${JSON.stringify(f)})'>Editar</button>
           <button onclick='excluir(${f.id}, "fornecedor")'>Excluir</button>

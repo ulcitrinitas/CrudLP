@@ -14,7 +14,6 @@ CREATE TABLE
         codigo_end INT AUTO_INCREMENT PRIMARY KEY,
         cep CHAR(9) NOT NULL,
         logradouro VARCHAR(256),
-        numero INT,
         cidade VARCHAR(64),
         UF CHAR(2),
         pais VARCHAR(128)

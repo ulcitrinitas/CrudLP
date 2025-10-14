@@ -1,10 +1,10 @@
-import mysql from "mysql2"
+import mysql from "mysql2/promise"
 
 // mysql://:@:/
 
 const db_url = "mysql://root:mypass@localhost:3308/lp_crud";
 
-const pool = mysql.createPool(db_url);
+const pool = await mysql.createPool(db_url);
 
 async function testConn() {
 

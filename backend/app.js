@@ -1,4 +1,4 @@
-import { connect_db, User } from "./db"
+import { connect_db} from "./db"
 
 // mysql://:@:/
 

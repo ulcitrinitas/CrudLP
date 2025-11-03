@@ -1,7 +1,7 @@
 import express from "express"
 import cors from "cors"
 
-import mysql from "mysql2/promise"
+import mysql from "mysql2"
 
 // define qual porta o express vai usar
 const port = 3000;
@@ -14,6 +14,22 @@ const connection = mysql.createConnection({
     database: "lp_crud"
 });
 
+let result = [];
+
+connection.execute("select * from Bebida", (err, results, fields) => {
+    if (err) {
+        console.error(`Erro: ${err}\nProblema com o banco de dados`);
+    }
+
+    result = results;
+
+    console.log(`Query result: ${JSON.stringify(results)}`);
+    console.log(`Schema results: ${fields}`);
+});
+
+console.log(`Results: ${JSON.stringify(result)}`);
+
+
 // cria o objeto do express
 const app = express();
 
@@ -23,7 +39,7 @@ app.use(cors()); // ativa o cors
 
 // rota get para bebidas
 app.get("/", (req, res) => {
-    res.json({ hello: "world" });
+    res.json({ hello: "world", query_results: result });
 });
 
 //inicia o servidor

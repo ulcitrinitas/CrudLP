@@ -1,31 +1,20 @@
 import express from "express"
 import cors from "cors"
 
-import mysql from "mysql2"
+import mysql from "mysql2/promise"
 
 // define qual porta o express vai usar
 const port = 3000;
 
 // cria a conexão com banco de dados
-const connection = mysql.createConnection({
+const connection = await mysql.createConnection({
     host: "localhost",
     user: "root",
     port: 3306,
     database: "lp_crud"
+}).catch(err => {
+    console.error(`Erro com a conexão`, err)
 });
-
-
-// Executa a query do banco de dados para teste
-connection.execute("select * from Bebida", (err, results, fields) => {
-
-    // verifica se a conexão gerou algum erro
-    if (err) {
-        console.error(`Erro: ${err}\nProblema com o banco de dados`);
-    }
-
-    console.log(`Query result: ${JSON.stringify(results)}`);
-});
-
 
 // cria o objeto do express
 const app = express();
@@ -35,19 +24,18 @@ app.use(express.json()); // retorna nas rotas o json
 app.use(cors()); // ativa o cors
 
 // rota get para bebidas
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
 
-    connection.execute("select * from Bebida", (err, results, fields) => {
+    // bloco para tratar erros
+    try {
+        let [results, fields] = await connection.execute("select * from Bebida");
 
-        // verifica se a conexão gerou algum erro
-        if (err) {
-            console.error(`Erro: ${err}\nProblema com o banco de dados`);
-            connection.end()
-        }
-
-        res.json({ results, fields });
-    });
-
+        res.status(201).json(results);
+    }
+    catch (err) {
+        console.error("Erro! Problemas com o banco de dados", err);
+        res.status(501).json({ msg: `Erro com o banco de dados`, error: err });
+    }
 });
 
 //inicia o servidor

@@ -14,20 +14,17 @@ const connection = mysql.createConnection({
     database: "lp_crud"
 });
 
-let result = [];
 
+// Executa a query do banco de dados para teste
 connection.execute("select * from Bebida", (err, results, fields) => {
+
+    // verifica se a conexão gerou algum erro
     if (err) {
         console.error(`Erro: ${err}\nProblema com o banco de dados`);
     }
 
-    result = results;
-
     console.log(`Query result: ${JSON.stringify(results)}`);
-    console.log(`Schema results: ${fields}`);
 });
-
-console.log(`Results: ${JSON.stringify(result)}`);
 
 
 // cria o objeto do express
@@ -39,7 +36,18 @@ app.use(cors()); // ativa o cors
 
 // rota get para bebidas
 app.get("/", (req, res) => {
-    res.json({ hello: "world", query_results: result });
+
+    connection.execute("select * from Bebida", (err, results, fields) => {
+
+        // verifica se a conexão gerou algum erro
+        if (err) {
+            console.error(`Erro: ${err}\nProblema com o banco de dados`);
+            connection.end()
+        }
+
+        res.json({ results, fields });
+    });
+
 });
 
 //inicia o servidor

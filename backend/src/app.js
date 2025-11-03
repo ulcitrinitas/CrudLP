@@ -23,8 +23,8 @@ const app = express();
 app.use(express.json()); // retorna nas rotas o json
 app.use(cors()); // ativa o cors
 
-// rota get para bebidas
-app.get("/", async (req, res) => {
+// rotas para as bebidas
+app.get("/bebidas", async (req, res) => {
 
     // bloco para tratar erros
     try {
@@ -36,7 +36,14 @@ app.get("/", async (req, res) => {
         console.error("Erro! Problemas com o banco de dados", err);
         res.status(501).json({ msg: `Erro com o banco de dados`, error: err });
     }
-});
+})
+    .post("/bebidas", (req, res) => {
+
+        console.log(`Body da requisição: ${req.body}`);
+
+        res.status(201).json(req.body);
+
+    });
 
 //inicia o servidor
 app.listen(port, () => {

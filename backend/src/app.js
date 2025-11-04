@@ -41,6 +41,7 @@ app.get("/bebidas", async (req, res) => {
     catch (err) {
         console.error("Erro! Problemas com o banco de dados", err);
         connection.end();
+        // 503 é servidor não disponível
         res.status(503).json({ msg: `Erro com o banco de dados`, error: err });
     }
 })
@@ -77,6 +78,8 @@ app.get("/bebidas", async (req, res) => {
         catch (err) {
             console.error("Erro! Problemas com o banco de dados", err);
             connection.end();
+
+            // 507 => Armazenamento insuficiente
             res.status(507).json({ msg: `Erro com o banco de dados`, error: err });
         }
 

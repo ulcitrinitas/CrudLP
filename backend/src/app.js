@@ -68,7 +68,10 @@ app.get("/bebidas", async (req, res) => {
                 [values]
             );
 
-            res.status(201).json(results);
+            res.status(201).json({
+                message: `${results.affectedRows} bebidas inseridas`,
+                bebidas: bebidas
+            });
 
         }
         catch (err) {

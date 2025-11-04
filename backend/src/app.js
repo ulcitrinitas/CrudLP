@@ -1,4 +1,4 @@
-import express from "express"
+import express, { json } from "express"
 import cors from "cors"
 
 import mysql from "mysql2/promise"
@@ -34,14 +34,36 @@ app.get("/bebidas", async (req, res) => {
     }
     catch (err) {
         console.error("Erro! Problemas com o banco de dados", err);
+        connection.end();
         res.status(501).json({ msg: `Erro com o banco de dados`, error: err });
     }
 })
     .post("/bebidas", (req, res) => {
 
-        console.log(`Body da requisição: ${req.body}`);
+        try {
 
-        res.status(201).json(req.body);
+            let values = [];
+
+            req.body.forEach(val => {
+                for (let key in val) {
+                    values.push(val[key]);
+                    console.log(`${key}: ${val[key]}`);
+                }
+            });
+
+            let [results, fields] = connection.execute(
+                `insert into Bebida ( beb_nome, qtde, preco_uni, volume, tipo, volume_med, forn_cod, marca ) values ?`,
+                values
+            );
+
+            res.status(201).json(results);
+
+        }
+        catch (err) {
+            console.error("Erro! Problemas com o banco de dados", err);
+            connection.end();
+            res.status(501).json({ msg: `Erro com o banco de dados`, error: err });
+        }
 
     });
 

@@ -36,15 +36,15 @@ app.get("/bebidas", async (req, res) => {
     try {
         let [results, fields] = await connection.execute(`select * from ${info_bebidas.nome}`);
 
-        res.status(201).json(results);
+        res.status(200).json(results);
     }
     catch (err) {
         console.error("Erro! Problemas com o banco de dados", err);
         connection.end();
-        res.status(501).json({ msg: `Erro com o banco de dados`, error: err });
+        res.status(503).json({ msg: `Erro com o banco de dados`, error: err });
     }
 })
-    .post("/bebidas", (req, res) => {
+    .post("/bebidas", async (req, res) => {
 
         try {
 
@@ -63,8 +63,8 @@ app.get("/bebidas", async (req, res) => {
                 ];
             });
 
-            let [results] = connection.query(
-                `insert into ${info_bebidas} ( ${info_bebidas.campos} ) values ?`,
+            let [results] = await connection.query(
+                `insert into ${info_bebidas.nome} ( ${info_bebidas.campos} ) values ?`,
                 [values]
             );
 
@@ -74,7 +74,7 @@ app.get("/bebidas", async (req, res) => {
         catch (err) {
             console.error("Erro! Problemas com o banco de dados", err);
             connection.end();
-            res.status(501).json({ msg: `Erro com o banco de dados`, error: err });
+            res.status(507).json({ msg: `Erro com o banco de dados`, error: err });
         }
 
     });

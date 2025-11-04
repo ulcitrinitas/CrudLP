@@ -34,7 +34,7 @@ erDiagram
 
 ```
 
-Para rodar instalar dependencias
+Para instalar dependencias
 ```
 cd backend; pnpm install
 ```

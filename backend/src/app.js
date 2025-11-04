@@ -23,12 +23,18 @@ const app = express();
 app.use(express.json()); // retorna nas rotas o json
 app.use(cors()); // ativa o cors
 
+const info_bebidas = {
+    nome: "Bebida",
+    campos: "beb_nome, qtde, preco_uni, volume, tipo, volume_med, forn_cod, marca"
+};
+
+
 // rotas para as bebidas
 app.get("/bebidas", async (req, res) => {
 
     // bloco para tratar erros
     try {
-        let [results, fields] = await connection.execute("select * from Bebida");
+        let [results, fields] = await connection.execute(`select * from ${info_bebidas.nome}`);
 
         res.status(201).json(results);
     }
@@ -42,18 +48,24 @@ app.get("/bebidas", async (req, res) => {
 
         try {
 
-            let values = [];
+            let bebidas = req.body;
 
-            req.body.forEach(val => {
-                for (let key in val) {
-                    values.push(val[key]);
-                    console.log(`${key}: ${val[key]}`);
-                }
+            let values = bebidas.map((b) => {
+                return [
+                    b.beb_nome,
+                    b.qtde,
+                    b.preco_uni,
+                    b.volume,
+                    b.tipo,
+                    b.volume_med,
+                    b.forn_cod,
+                    b.marca
+                ];
             });
 
-            let [results, fields] = connection.execute(
-                `insert into Bebida ( beb_nome, qtde, preco_uni, volume, tipo, volume_med, forn_cod, marca ) values ?`,
-                values
+            let [results] = connection.query(
+                `insert into ${info_bebidas} ( ${info_bebidas.campos} ) values ?`,
+                [values]
             );
 
             res.status(201).json(results);

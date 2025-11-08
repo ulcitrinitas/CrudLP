@@ -1,0 +1,1 @@
+// Arquivo que guarda algumas funções usadas

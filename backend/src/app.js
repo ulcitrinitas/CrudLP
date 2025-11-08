@@ -32,6 +32,11 @@ const info_bebidas = {
     campos: "beb_nome, qtde, preco_uni, volume, tipo, forn_cod, marca"
 };
 
+const info_fornecedores = {
+    nome: "Fornecedor",
+    campos: "nome, cnpj, email, pais_cod, endereco, uf"
+};
+
 function converterEmVetor(req_body) {
 
     let v = [];
@@ -62,6 +67,114 @@ function converterEmVetor(req_body) {
 }
 
 // rotas para as bebidas
+app.get("/bebidas", async (req, res) => {
+
+    // bloco para tratar erros
+    try {
+        let [results, fields] = await connection.execute(`select * from ${info_bebidas.nome}`);
+
+        res.status(200).json(results);
+    }
+    catch (err) {
+        console.error("Erro! Problemas com o banco de dados", err);
+        connection.end();
+        res.status(404).json({ msg: `Erro com o banco de dados`, error: err });
+    }
+})
+    .post("/bebidas", async (req, res) => {
+
+        try {
+
+            let bebidas = converterEmVetor(req.body);
+
+            await connection.beginTransaction();
+
+            let [results] = await connection.query(
+                `insert into ${info_bebidas.nome} ( ${info_bebidas.campos} ) values (?)`,
+                [bebidas]
+            );
+
+            await connection.commit();
+
+            res.status(201).json({
+                message: `${results.affectedRows} bebidas inseridas`,
+                bebidas: bebidas
+            });
+
+        }
+        catch (err) {
+            console.error("Erro! Problemas com o banco de dados", err);
+
+            connection.rollback();
+
+            res.status(404).json({ msg: `Erro com o banco de dados`, error: err });
+        }
+    })
+    .put("/bebidas/:id", async (req, res) => {
+
+        let id = req.params.id;
+
+        let bebidas = converterEmVetor(req.body);
+
+        let sql = `update ${info_bebidas.nome}
+        set beb_nome = ?, qtde = ?, preco_uni = ?, volume = ?, tipo = ?, forn_cod = ?, marca = ?
+        where beb_cod = ?
+        `;
+
+        bebidas.push(id);
+
+        console.log(`Bebidas vetor: ${JSON.stringify(bebidas)}`);
+
+        try {
+            await connection.beginTransaction();
+
+            let [results] = await connection.query(sql, bebidas);
+
+            await connection.commit();
+
+            res.status(201).json({
+                message: `${results.affectedRows} bebidas atualizadas`,
+                bebidas: results
+            });
+        }
+        catch (err) {
+            console.error("Erro! Problemas com o banco de dados", err);
+
+            await connection.rollback();
+
+            res.status(404).json({ msg: `Erro com o banco de dados`, error: err });
+        }
+
+    })
+    .delete("/bebidas/:id", async (req, res) => {
+
+        let id = req.params.id;
+
+        try {
+            await connection.beginTransaction();
+
+            let [results] = await connection.query(
+                `delete from ${info_bebidas.nome} where beb_cod = ${id} limit 1`,
+            );
+
+            await connection.commit();
+
+            res.status(201).json({
+                message: `${results.affectedRows} bebidas deletadas`,
+                bebidas: results
+            });
+        }
+        catch (err) {
+            console.error("Erro! Problemas com o banco de dados", err);
+
+            await connection.rollback();
+
+            res.status(404).json({ msg: `Erro com o banco de dados`, error: err });
+        }
+
+    });
+
+// rotas para as fornecedores
 app.get("/bebidas", async (req, res) => {
 
     // bloco para tratar erros

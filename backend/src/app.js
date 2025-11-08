@@ -83,13 +83,14 @@ app.get("/bebidas", async (req, res) => {
 
             let bebidas = converterEmVetor(req.body);
 
-            let sql = ``
-
+            connection.beginTransaction();
 
             let [results] = await connection.query(
                 `insert into ${info_bebidas.nome} ( ${info_bebidas.campos} ) values (?)`,
                 [bebidas]
             );
+
+            connection.commit();
 
             res.status(201).json({
                 message: `${results.affectedRows} bebidas inseridas`,
@@ -98,13 +99,24 @@ app.get("/bebidas", async (req, res) => {
 
         }
         catch (err) {
-            console.error("Erro! Problemas com o banco de dados", err)
+            console.error("Erro! Problemas com o banco de dados", err);
+
+            connection.rollback();
 
             // 507 => Armazenamento insuficiente
             res.status(507).json({ msg: `Erro com o banco de dados`, error: err });
         }
+    })
+    .put("/bebidas/:id", async (req, res) => {
 
-    });
+        let id = req.params.id;
+
+        let bebidas = converterEmVetor(req.body);
+
+        let [results] = connection.query();
+
+    })
+    ;
 
 //inicia o servidor
 app.listen(port, () => {

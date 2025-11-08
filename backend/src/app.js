@@ -73,8 +73,7 @@ app.get("/bebidas", async (req, res) => {
     catch (err) {
         console.error("Erro! Problemas com o banco de dados", err);
         connection.end();
-        // 503 é servidor não disponível
-        res.status(503).json({ msg: `Erro com o banco de dados`, error: err });
+        res.status(404).json({ msg: `Erro com o banco de dados`, error: err });
     }
 })
     .post("/bebidas", async (req, res) => {
@@ -103,8 +102,7 @@ app.get("/bebidas", async (req, res) => {
 
             connection.rollback();
 
-            // 507 => Armazenamento insuficiente
-            res.status(507).json({ msg: `Erro com o banco de dados`, error: err });
+            res.status(404).json({ msg: `Erro com o banco de dados`, error: err });
         }
     })
     .put("/bebidas/:id", async (req, res) => {
@@ -139,8 +137,7 @@ app.get("/bebidas", async (req, res) => {
 
             await connection.rollback();
 
-            // 507 => Armazenamento insuficiente
-            res.status(507).json({ msg: `Erro com o banco de dados`, error: err });
+            res.status(404).json({ msg: `Erro com o banco de dados`, error: err });
         }
 
     })

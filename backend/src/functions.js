@@ -33,15 +33,15 @@ export function fornVetor(req_body) {
     let v = [];
 
     if (Array.isArray(req_body)) {
-        v = req_body.map((b) => {
+        v = req_body.map((f) => {
             return [
-                b.beb_nome,
-                b.qtde,
-                b.preco_uni,
-                b.volume,
-                b.tipo,
-                b.forn_cod,
-                b.marca
+                f.nome,
+                f.qtde,
+                f.cnpj,
+                f.email,
+                f.pais_cod,
+                f.endereco,
+                f.uf
             ];
         });
     }

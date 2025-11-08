@@ -37,7 +37,7 @@ const info_fornecedores = {
     campos: "nome, cnpj, email, pais_cod, endereco, uf"
 };
 
-function converterEmVetor(req_body) {
+function bebidasVetor(req_body) {
 
     let v = [];
 
@@ -63,7 +63,6 @@ function converterEmVetor(req_body) {
     console.log(v);
 
     return v;
-
 }
 
 // rotas para as bebidas
@@ -85,7 +84,7 @@ app.get("/bebidas", async (req, res) => {
 
         try {
 
-            let bebidas = converterEmVetor(req.body);
+            let bebidas = bebidasVetor(req.body);
 
             await connection.beginTransaction();
 
@@ -114,7 +113,7 @@ app.get("/bebidas", async (req, res) => {
 
         let id = req.params.id;
 
-        let bebidas = converterEmVetor(req.body);
+        let bebidas = bebidasVetor(req.body);
 
         let sql = `update ${info_bebidas.nome}
         set beb_nome = ?, qtde = ?, preco_uni = ?, volume = ?, tipo = ?, forn_cod = ?, marca = ?
@@ -193,7 +192,7 @@ app.get("/bebidas", async (req, res) => {
 
         try {
 
-            let bebidas = converterEmVetor(req.body);
+            let bebidas = bebidasVetor(req.body);
 
             await connection.beginTransaction();
 
@@ -222,7 +221,7 @@ app.get("/bebidas", async (req, res) => {
 
         let id = req.params.id;
 
-        let bebidas = converterEmVetor(req.body);
+        let bebidas = bebidasVetor(req.body);
 
         let sql = `update ${info_bebidas.nome}
         set beb_nome = ?, qtde = ?, preco_uni = ?, volume = ?, tipo = ?, forn_cod = ?, marca = ?

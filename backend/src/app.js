@@ -83,14 +83,14 @@ app.get("/bebidas", async (req, res) => {
 
             let bebidas = converterEmVetor(req.body);
 
-            connection.beginTransaction();
+            await connection.beginTransaction();
 
             let [results] = await connection.query(
                 `insert into ${info_bebidas.nome} ( ${info_bebidas.campos} ) values (?)`,
                 [bebidas]
             );
 
-            connection.commit();
+            await connection.commit();
 
             res.status(201).json({
                 message: `${results.affectedRows} bebidas inseridas`,
@@ -113,7 +113,35 @@ app.get("/bebidas", async (req, res) => {
 
         let bebidas = converterEmVetor(req.body);
 
-        let [results] = connection.query();
+        let sql = `update ${info_bebidas.nome}
+        set beb_nome = ?, qtde = ?, preco_uni = ?, volume = ?, tipo = ?, forn_cod = ?, marca = ?
+        where beb_cod = ?
+        `;
+
+        bebidas.push(id);
+
+        console.log(`Bebidas vetor: ${JSON.stringify(bebidas)}`);
+
+        try {
+            await connection.beginTransaction();
+
+            let [results] = await connection.query(sql, bebidas);
+
+            await connection.commit();
+
+            res.status(201).json({
+                message: `${results.affectedRows} bebidas inseridas`,
+                bebidas: bebidas
+            });
+        }
+        catch (err) {
+            console.error("Erro! Problemas com o banco de dados", err);
+
+            await connection.rollback();
+
+            // 507 => Armazenamento insuficiente
+            res.status(507).json({ msg: `Erro com o banco de dados`, error: err });
+        }
 
     })
     ;

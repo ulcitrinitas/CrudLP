@@ -1,7 +1,8 @@
-import express, { json } from "express"
+import express from "express"
 import cors from "cors"
-
 import mysql from "mysql2/promise"
+
+import { json, Router } from "express"
 
 // define qual porta o express vai usar
 const port = 3000;
@@ -19,15 +20,46 @@ const connection = await mysql.createConnection({
 // cria o objeto do express
 const app = express();
 
+// cria o objeto para gerenciar as rotas
+const router = Router();
+
 // define as configurações do servidor
 app.use(express.json()); // retorna nas rotas o json
 app.use(cors()); // ativa o cors
 
 const info_bebidas = {
     nome: "Bebida",
-    campos: "beb_nome, qtde, preco_uni, volume, tipo, volume_med, forn_cod, marca"
+    campos: "beb_nome, qtde, preco_uni, volume, tipo, forn_cod, marca"
 };
 
+function converterEmVetor(req_body) {
+
+    let v = [];
+
+    if (Array.isArray(req_body)) {
+        v = req_body.map((b) => {
+            return [
+                b.beb_nome,
+                b.qtde,
+                b.preco_uni,
+                b.volume,
+                b.tipo,
+                b.forn_cod,
+                b.marca
+            ];
+        });
+    }
+    else {
+        for (const chave in req_body) {
+            v.push(req_body[chave]);
+        }
+    }
+
+    console.log(v);
+
+    return v;
+
+}
 
 // rotas para as bebidas
 app.get("/bebidas", async (req, res) => {
@@ -49,24 +81,14 @@ app.get("/bebidas", async (req, res) => {
 
         try {
 
-            let bebidas = req.body;
+            let bebidas = converterEmVetor(req.body);
 
-            let values = bebidas.map((b) => {
-                return [
-                    b.beb_nome,
-                    b.qtde,
-                    b.preco_uni,
-                    b.volume,
-                    b.tipo,
-                    b.volume_med,
-                    b.forn_cod,
-                    b.marca
-                ];
-            });
+            let sql = ``
+
 
             let [results] = await connection.query(
-                `insert into ${info_bebidas.nome} ( ${info_bebidas.campos} ) values ?`,
-                [values]
+                `insert into ${info_bebidas.nome} ( ${info_bebidas.campos} ) values (?)`,
+                [bebidas]
             );
 
             res.status(201).json({
@@ -76,8 +98,7 @@ app.get("/bebidas", async (req, res) => {
 
         }
         catch (err) {
-            console.error("Erro! Problemas com o banco de dados", err);
-            connection.end();
+            console.error("Erro! Problemas com o banco de dados", err)
 
             // 507 => Armazenamento insuficiente
             res.status(507).json({ msg: `Erro com o banco de dados`, error: err });

@@ -4,6 +4,8 @@ import mysql from "mysql2/promise"
 
 import { json, Router } from "express"
 
+import { bebidasVetor } from "./functions.js"
+
 // define qual porta o express vai usar
 const port = 3000;
 

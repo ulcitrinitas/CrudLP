@@ -128,8 +128,8 @@ app.get("/bebidas", async (req, res) => {
             await connection.commit();
 
             res.status(201).json({
-                message: `${results.affectedRows} bebidas inseridas`,
-                bebidas: bebidas
+                message: `${results.affectedRows} bebidas atualizadas`,
+                bebidas: results
             });
         }
         catch (err) {
@@ -141,7 +141,33 @@ app.get("/bebidas", async (req, res) => {
         }
 
     })
-    ;
+    .delete("/bebidas/:id", async (req, res) => {
+
+        let id = req.params.id;
+
+        try {
+            await connection.beginTransaction();
+
+            let [results] = await connection.query(
+                `delete from ${info_bebidas.nome} where beb_cod = ${id} limit 1`,
+            );
+
+            await connection.commit();
+
+            res.status(201).json({
+                message: `${results.affectedRows} bebidas deletadas`,
+                bebidas: results
+            });
+        }
+        catch (err) {
+            console.error("Erro! Problemas com o banco de dados", err);
+
+            await connection.rollback();
+
+            res.status(404).json({ msg: `Erro com o banco de dados`, error: err });
+        }
+
+    });
 
 //inicia o servidor
 app.listen(port, () => {

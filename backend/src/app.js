@@ -148,11 +148,11 @@ app.get("/bebidas", async (req, res) => {
     });
 
 // rotas para as fornecedores
-app.get("/bebidas", async (req, res) => {
+app.get("/fornecedores", async (req, res) => {
 
     // bloco para tratar erros
     try {
-        let [results, fields] = await connection.execute(`select * from ${info_bebidas.nome}`);
+        let [results, fields] = await connection.execute(`select * from ${info_fornecedores.nome}`);
 
         res.status(200).json(results);
     }
@@ -162,7 +162,7 @@ app.get("/bebidas", async (req, res) => {
         res.status(404).json({ msg: `Erro com o banco de dados`, error: err });
     }
 })
-    .post("/bebidas", async (req, res) => {
+    .post("/fornecedores", async (req, res) => {
 
         try {
 
@@ -171,7 +171,7 @@ app.get("/bebidas", async (req, res) => {
             await connection.beginTransaction();
 
             let [results] = await connection.query(
-                `insert into ${info_bebidas.nome} ( ${info_bebidas.campos} ) values (?)`,
+                `insert into ${info_fornecedores.nome} ( ${info_fornecedores.campos} ) values (?)`,
                 [bebidas]
             );
 
@@ -191,13 +191,13 @@ app.get("/bebidas", async (req, res) => {
             res.status(404).json({ msg: `Erro com o banco de dados`, error: err });
         }
     })
-    .put("/bebidas/:id", async (req, res) => {
+    .put("/fornecedores/:id", async (req, res) => {
 
         let id = req.params.id;
 
         let bebidas = bebidasVetor(req.body);
 
-        let sql = `update ${info_bebidas.nome}
+        let sql = `update ${info_fornecedores.nome}
         set beb_nome = ?, qtde = ?, preco_uni = ?, volume = ?, tipo = ?, forn_cod = ?, marca = ?
         where beb_cod = ?
         `;
@@ -227,7 +227,7 @@ app.get("/bebidas", async (req, res) => {
         }
 
     })
-    .delete("/bebidas/:id", async (req, res) => {
+    .delete("/fornecedores/:id", async (req, res) => {
 
         let id = req.params.id;
 
@@ -235,7 +235,7 @@ app.get("/bebidas", async (req, res) => {
             await connection.beginTransaction();
 
             let [results] = await connection.query(
-                `delete from ${info_bebidas.nome} where beb_cod = ${id} limit 1`,
+                `delete from ${info_fornecedores.nome} where beb_cod = ${id} limit 1`,
             );
 
             await connection.commit();

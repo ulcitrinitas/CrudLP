@@ -36,10 +36,11 @@ export function fornVetor(req_body) {
         v = req_body.map((f) => {
             return [
                 f.nome,
-                f.qtde,
                 f.cnpj,
                 f.email,
                 f.pais_cod,
+                f.telefone,
+                f.pais,
                 f.endereco,
                 f.uf
             ];

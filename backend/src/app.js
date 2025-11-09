@@ -4,7 +4,7 @@ import mysql from "mysql2/promise"
 
 import { json, Router } from "express"
 
-import { bebidasVetor } from "./functions.js"
+import { bebidasVetor, fornVetor } from "./functions.js"
 
 // define qual porta o express vai usar
 const port = 3000;
@@ -36,7 +36,7 @@ const info_bebidas = {
 
 const info_fornecedores = {
     nome: "Fornecedor",
-    campos: "nome, cnpj, email, pais_cod, endereco, uf"
+    campos: "nome, cnpj, email, pais_cod, telefone, pais, endereco, uf"
 };
 
 // rotas para as bebidas
@@ -166,20 +166,20 @@ app.get("/fornecedores", async (req, res) => {
 
         try {
 
-            let bebidas = bebidasVetor(req.body);
+            let fornecedores = fornVetor(req.body);
 
             await connection.beginTransaction();
 
             let [results] = await connection.query(
                 `insert into ${info_fornecedores.nome} ( ${info_fornecedores.campos} ) values (?)`,
-                [bebidas]
+                [fornecedores]
             );
 
             await connection.commit();
 
             res.status(201).json({
-                message: `${results.affectedRows} bebidas inseridas`,
-                bebidas: bebidas
+                message: `${results.affectedRows} fornecedores inseridas`,
+                bebidas: fornecedores
             });
 
         }
@@ -188,34 +188,34 @@ app.get("/fornecedores", async (req, res) => {
 
             connection.rollback();
 
-            res.status(404).json({ msg: `Erro com o banco de dados`, error: err });
+            res.status(404).json({ msg: `Erro com o banco de dados` });
         }
     })
     .put("/fornecedores/:id", async (req, res) => {
 
         let id = req.params.id;
 
-        let bebidas = bebidasVetor(req.body);
+        let fornecedores = fornVetor(req.body);
 
         let sql = `update ${info_fornecedores.nome}
-        set beb_nome = ?, qtde = ?, preco_uni = ?, volume = ?, tipo = ?, forn_cod = ?, marca = ?
-        where beb_cod = ?
+        set nome = ?, cnpj = ?, email = ?, pais_cod = ?, telefone = ?, pais = ?, endereco = ?, uf = ?
+        where id = ?
         `;
 
-        bebidas.push(id);
+        fornecedores.push(id);
 
-        console.log(`Bebidas vetor: ${JSON.stringify(bebidas)}`);
+        console.log(`fornecedores vetor: ${JSON.stringify(fornecedores)}`);
 
         try {
             await connection.beginTransaction();
 
-            let [results] = await connection.query(sql, bebidas);
+            let [results] = await connection.query(sql, fornecedores);
 
             await connection.commit();
 
             res.status(201).json({
-                message: `${results.affectedRows} bebidas atualizadas`,
-                bebidas: results
+                message: `${results.affectedRows} fornecedores atualizadas`,
+                fornecedores: results
             });
         }
         catch (err) {
@@ -235,14 +235,14 @@ app.get("/fornecedores", async (req, res) => {
             await connection.beginTransaction();
 
             let [results] = await connection.query(
-                `delete from ${info_fornecedores.nome} where beb_cod = ${id} limit 1`,
+                `delete from ${info_fornecedores.nome} where id = ${id} limit 1`,
             );
 
             await connection.commit();
 
             res.status(201).json({
-                message: `${results.affectedRows} bebidas deletadas`,
-                bebidas: results
+                message: `${results.affectedRows} fornecedores deletadas`,
+                fornecedores: results
             });
         }
         catch (err) {

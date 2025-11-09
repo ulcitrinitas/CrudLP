@@ -22,9 +22,6 @@ const connection = await mysql.createConnection({
 // cria o objeto do express
 const app = express();
 
-// cria o objeto para gerenciar as rotas
-const router = Router();
-
 // define as configurações do servidor
 app.use(express.json()); // retorna nas rotas o json
 app.use(cors()); // ativa o cors

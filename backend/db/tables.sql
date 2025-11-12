@@ -2,10 +2,6 @@ CREATE DATABASE lp_crud;
 
 USE lp_crud;
 
-create database crudLP;
-
-use crudLP;
-
 CREATE TABLE
     Fornecedor (
         id INT AUTO_INCREMENT UNIQUE PRIMARY KEY,
@@ -13,6 +9,8 @@ CREATE TABLE
         cnpj CHAR(18) NOT NULL,
         email VARCHAR(128),
         pais_cod VARCHAR(5),
+        telefone varchar(9), 
+        pais varchar(128),
         endereco VARCHAR(512),
         uf CHAR(2)
     );
@@ -25,7 +23,6 @@ CREATE TABLE
         preco_uni DECIMAL(7, 3),
         volume DECIMAL(7, 3),
         tipo VARCHAR(128),
-        volume_med INT,
         forn_cod INT,
         marca VARCHAR(128),
         FOREIGN KEY (forn_cod) REFERENCES Fornecedor (id)

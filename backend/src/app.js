@@ -36,6 +36,30 @@ const info_fornecedores = {
     campos: "nome, cnpj, email, pais_cod, telefone, pais, endereco, uf"
 };
 
+
+// rota para pegar dados de ambas tabelas
+
+app.get("/", async (req, res) => {
+
+    try {
+        let [results] = await connection.execute(
+            `select beb_nome, qtde, preco_uni, tipo, nome, email, pais_cod, telefone, pais, endereco, marca
+            from ${info_bebidas.nome} b
+            join ${info_fornecedores.nome} f on b.forn_cod = f.id;`
+        );
+
+        res.status(200).json(results);
+    }
+    catch(err) {
+        console.log("Erro! Problemas com o banco de dados", err);
+        connection.end();
+        res.status(404).json({msg: `Erro com o banco de dados`})
+    }
+
+});
+
+
+
 // rotas para as bebidas
 app.get("/bebidas", async (req, res) => {
 

@@ -52,7 +52,8 @@ function carregarDados() {
         numero: '',
         cidade: '',
         uf: f.uf,
-        pais: f.pais
+        pais: f.pais,
+        email: f.email
       }));
 
       return true; // Indica sucesso
@@ -90,6 +91,7 @@ function abrirModalFornecedor(f = null) {
     document.getElementById('fornecedorCidade').value = f.cidade || '';
     document.getElementById('fornecedorUF').value = f.uf || '';
     document.getElementById('fornecedorPais').value = f.pais || '';
+    document.getElementById('fornecedorEmail').value = f.email || '';
   } else {
     document.getElementById('tituloFornecedor').innerText = 'Novo Fornecedor';
     document.querySelectorAll('#modalFornecedor input').forEach(i => i.value = '');
@@ -291,6 +293,8 @@ function exibirTabela() {
   } else {
     html += `<th>Nome Bebida</th>
             <th>Marca</th>
+            <th>Preço</th>
+            <th>Quantidade</th>
             <th>Fornecedor</th>
             <th>Telefone</th>
             <th>email</th>
@@ -298,8 +302,13 @@ function exibirTabela() {
     bebidas.forEach(b => {
       const forn = fornecedores.find(f => f.id == b.id_fornecedor);
       html += `<tr>
-    t    <td>${b.nome}</td><td>${b.marca}</td>
-        <td>${forn ? forn.nome : 'N/A'}</td><td>${forn ? forn.telefone : '-'}</td>
+      <td>${b.nome}</td>
+    <td>${b.marca}</td>
+    <td>${b.preco}</td>
+    <td>${b.qtde}</td>
+    <td>${forn ? forn.nome : 'N/A'}</td>
+    <td>${forn ? forn.telefone : '-'}</td>
+    <td>${forn ? forn.email : '-'}</td>
       </tr>`;
     });
   }

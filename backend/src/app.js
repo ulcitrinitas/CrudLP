@@ -33,7 +33,7 @@ const info_bebidas = {
 
 const info_fornecedores = {
     nome: "Fornecedor",
-    campos: "nome, cnpj, email, pais_cod, telefone, pais, endereco, uf"
+    campos: "nome, cnpj, email,  telefone, pais, endereco, uf"
 };
 
 
@@ -50,10 +50,10 @@ app.get("/", async (req, res) => {
 
         res.status(200).json(results);
     }
-    catch(err) {
+    catch (err) {
         console.log("Erro! Problemas com o banco de dados", err);
         connection.end();
-        res.status(404).json({msg: `Erro com o banco de dados`})
+        res.status(404).json({ msg: `Erro com o banco de dados` })
     }
 
 });
@@ -219,7 +219,7 @@ app.get("/fornecedores", async (req, res) => {
         let fornecedores = fornVetor(req.body);
 
         let sql = `update ${info_fornecedores.nome}
-        set nome = ?, cnpj = ?, email = ?, pais_cod = ?, telefone = ?, pais = ?, endereco = ?, uf = ?
+        set nome = ?, cnpj = ?, email = ?, telefone = ?, pais = ?, endereco = ?, uf = ?
         where id = ?
         `;
 

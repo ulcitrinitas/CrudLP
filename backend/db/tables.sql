@@ -8,7 +8,6 @@ CREATE TABLE
         nome VARCHAR(128) NOT NULL,
         cnpj CHAR(18) NOT NULL,
         email VARCHAR(128),
-        pais_cod VARCHAR(5),
         telefone varchar(9), 
         pais varchar(128),
         endereco VARCHAR(512),

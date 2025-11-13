@@ -38,7 +38,6 @@ export function fornVetor(req_body) {
                 f.nome,
                 f.cnpj,
                 f.email,
-                f.pais_cod,
                 f.telefone,
                 f.pais,
                 f.endereco,

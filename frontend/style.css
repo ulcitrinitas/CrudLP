@@ -67,7 +67,6 @@ th {
   border-radius: 8px;
   /* Largura ajustada para acomodar o Grid */
   width: 600px;
-  /* Aumentado ligeiramente para acomodar o grid de 4 colunas */
   position: relative;
 }
 
@@ -121,36 +120,78 @@ th {
 
 /* Regras de Layout Específicas para Modais */
 
-/* === Campos Lado a Lado (Fornecedor: CNPJ/Telefone, Bebida: Qtde/Preço e Volume/Tipo) === */
+/* === Campos Lado a Lado (Fornecedor) === */
 
 /* Fornecedor: CNPJ/Telefone */
-.modal-content form label[for="fornecedorCNPJ"],
-.modal-content form #fornecedorCNPJ,
-.modal-content form label[for="fornecedorTelefone"],
-.modal-content form #fornecedorTelefone {
-  /* Define explicitamente onde cada item agrupado deve ficar no grid de 4 colunas */
-}
-
 .modal-content form label[for="fornecedorCNPJ"] {
   grid-column: 1;
-  /* Rótulo 1 (Coluna 1) */
 }
 
 .modal-content form #fornecedorCNPJ {
   grid-column: 2;
-  /* Input 1 (Coluna 2) */
 }
 
 .modal-content form label[for="fornecedorTelefone"] {
   grid-column: 3;
-  /* Rótulo 2 (Coluna 3) */
 }
 
 .modal-content form #fornecedorTelefone {
   grid-column: 4;
-  /* Input 2 (Coluna 4) */
 }
 
+/* GRUPO: Endereço (CEP e UF) */
+.modal-content form label[for="fornecedorCEP"] {
+  grid-column: 1;
+}
+
+.modal-content form #fornecedorCEP {
+  grid-column: 2;
+}
+
+.modal-content form label[for="fornecedorUF"] {
+  grid-column: 3;
+}
+
+.modal-content form #fornecedorUF {
+  grid-column: 4;
+}
+
+/* GRUPO NOVO: Endereço (Logradouro e Número) */
+.modal-content form label[for="fornecedorLogradouro"] {
+  grid-column: 1;
+}
+
+.modal-content form #fornecedorLogradouro {
+  grid-column: 2;
+}
+
+.modal-content form label[for="fornecedorNumero"] {
+  grid-column: 3;
+}
+
+.modal-content form #fornecedorNumero {
+  grid-column: 4;
+}
+
+/* GRUPO NOVO: Endereço (Cidade e País) */
+.modal-content form label[for="fornecedorCidade"] {
+  grid-column: 1;
+}
+
+.modal-content form #fornecedorCidade {
+  grid-column: 2;
+}
+
+.modal-content form label[for="fornecedorPais"] {
+  grid-column: 3;
+}
+
+.modal-content form #fornecedorPais {
+  grid-column: 4;
+}
+
+
+/* === Campos Lado a Lado (Bebida) === */
 
 /* Bebida: Quantidade/Preço */
 .modal-content form label[for="bebidaQtde"] {
@@ -187,7 +228,7 @@ th {
 }
 
 
-/* === Campos de Linha Inteira (Todos os outros que precisam ocupar as 4 colunas) === */
+/* === Campos de Linha Única (Apenas Nome, Email e Marca/Fornecedor) === */
 
 .modal-content form label[for="fornecedorNome"],
 .modal-content form #fornecedorNome,
@@ -198,24 +239,10 @@ th {
 .modal-content form label[for="bebidaMarca"],
 .modal-content form #bebidaMarca,
 .modal-content form label[for="bebidaFornecedor"],
-.modal-content form #bebidaFornecedor,
-.modal-content form label[for="fornecedorCEP"],
-.modal-content form #fornecedorCEP,
-.modal-content form label[for="fornecedorLogradouro"],
-.modal-content form #fornecedorLogradouro,
-.modal-content form label[for="fornecedorNumero"],
-.modal-content form #fornecedorNumero,
-.modal-content form label[for="fornecedorCidade"],
-.modal-content form #fornecedorCidade,
-.modal-content form label[for="fornecedorUF"],
-.modal-content form #fornecedorUF,
-.modal-content form label[for="fornecedorPais"],
-.modal-content form #fornecedorPais {
-  /* Faz com que o rótulo e o campo ocupem toda a largura (4 colunas), 
-       forçando o rótulo a ficar acima do campo para ter um visual mais limpo */
+.modal-content form #bebidaFornecedor {
+  /* Ocupam toda a largura (4 colunas). */
   grid-column: 1 / span 4;
   text-align: left;
-  /* Garante que o rótulo se alinhe à esquerda */
 }
 
 .modal-actions {
@@ -227,7 +254,6 @@ th {
 
 /* Estilo para os botões de ação do modal */
 .modal-content button {
-  /* Opcional: Para mover os botões para a parte de baixo, fora do grid, e centralizar */
   display: inline-block;
   margin-top: 10px;
 }

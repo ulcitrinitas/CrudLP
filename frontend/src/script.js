@@ -8,71 +8,75 @@ let fornecedores = [];
 // Funções para adicionar e filtrar
 document.getElementById('btnAddFornecedor').onclick = () => abrirModalFornecedor();
 document.getElementById('btnAddBebida').onclick = () => abrirModalBebida();
-// Ao mudar o filtro, a tabela é exibida (e os dados são carregados, se necessário)
 document.getElementById('filter').onchange = exibirTabela;
 
 // Inicialização: Carrega os dados e exibe a tabela inicial
 carregarDadosEExibirTabela();
 
-// ==== CARREGAR DADOS GLOBAIS DA API ====
-async function carregarDados() {
-  try {
-    const [resBebidas, resFornecedores] = await Promise.all([
-      fetch(`${API_BASE_URL}/bebidas`),
-      fetch(`${API_BASE_URL}/fornecedores`)
-    ]);
+// ==== CARREGAR DADOS GLOBAIS DA API (USANDO .THEN) ====
+function carregarDados() {
+  // Retorna uma Promise que resolve quando ambos os dados forem carregados e mapeados
+  return Promise.all([
+    fetch(`${API_BASE_URL}/bebidas`),
+    fetch(`${API_BASE_URL}/fornecedores`)
+  ])
+    .then(([resBebidas, resFornecedores]) => {
+      // Verifica se as respostas são OK antes de tentar ler o JSON
+      if (!resBebidas.ok || !resFornecedores.ok) {
+        throw new Error('Falha ao carregar dados de um ou mais endpoints.');
+      }
+      return Promise.all([resBebidas.json(), resFornecedores.json()]);
+    })
+    .then(([dadosBebidas, dadosFornecedores]) => {
+      // Mapeamento dos nomes do BD para os nomes usados no frontend
 
-    bebidas = await resBebidas.json();
-    fornecedores = await resFornecedores.json();
+      // 1. Mapeamento das Bebidas
+      bebidas = dadosBebidas.map(b => ({
+        id: b.beb_cod,
+        nome: b.beb_nome,
+        qtde: b.qtde,
+        preco: b.preco_uni, // 'preco_uni' é o nome no BD
+        volume: b.volume,
+        marca: b.marca,
+        id_fornecedor: b.forn_cod // 'forn_cod' é o nome no BD
+      }));
 
-    // Mapeamento dos nomes do banco de dados para os nomes usados no frontend
-    // Fornecedor: id, nome, cnpj, telefone, pais, endereco, uf
-    // Bebida: beb_cod (para id), beb_nome (para nome), qtde, preco_uni (para preco), volume, forn_cod (para id_fornecedor), marca
+      // 2. Mapeamento dos Fornecedores
+      fornecedores = dadosFornecedores.map(f => ({
+        id: f.id,
+        nome: f.nome,
+        cnpj: f.cnpj,
+        telefone: f.telefone,
+        cep: '',
+        logradouro: f.endereco, // Usando 'endereco' do BD como 'logradouro' no frontend
+        numero: '',
+        cidade: '',
+        uf: f.uf,
+        pais: f.pais
+      }));
 
-    // Ajusta a estrutura da bebida para o frontend (usa 'id' e 'id_fornecedor')
-    bebidas = bebidas.map(b => ({
-      id: b.beb_cod,
-      nome: b.beb_nome,
-      qtde: b.qtde,
-      preco: b.preco_uni, // 'preco_uni' é o nome no BD
-      volume: b.volume,
-      marca: b.marca,
-      id_fornecedor: b.forn_cod // 'forn_cod' é o nome no BD
-    }));
-
-    // Ajusta a estrutura do fornecedor para o frontend
-    fornecedores = fornecedores.map(f => ({
-      id: f.id,
-      nome: f.nome,
-      cnpj: f.cnpj,
-      telefone: f.telefone,
-      cep: '', // O campo CEP não existe, mas mantemos para a lógica de exibição. Se o BD armazena o endereço completo em 'endereco', ele precisará ser parseado no backend/frontend.
-      logradouro: f.endereco, // Usando 'endereco' do BD como 'logradouro' no frontend
-      numero: '',
-      cidade: '',
-      uf: f.uf,
-      pais: f.pais
-    }));
-
-  } catch (error) {
-    console.error('Erro ao carregar dados da API:', error);
-    alert('Erro ao carregar dados. Verifique a conexão com a API.');
-  }
+      return true; // Indica sucesso
+    })
+    .catch(error => {
+      console.error('Erro ao carregar dados da API:', error);
+      alert('Erro ao carregar dados. Verifique a conexão com a API.');
+      return false; // Indica falha
+    });
 }
 
-async function carregarDadosEExibirTabela() {
-  await carregarDados();
-  exibirTabela();
+function carregarDadosEExibirTabela() {
+  carregarDados()
+    .then(sucesso => {
+      if (sucesso) {
+        exibirTabela();
+      }
+    });
 }
 
 
 // ==== MODAIS ====
-// As funções abrirModalFornecedor e fecharModal não mudam (apenas manipulam o DOM)
-
 function abrirModalFornecedor(f = null) {
   document.getElementById('modalFornecedor').style.display = 'block';
-
-  // Mantemos o campo hidden para a lógica de salvamento
   document.getElementById('fornecedorId').value = f ? f.id : '';
 
   if (f) {
@@ -80,12 +84,10 @@ function abrirModalFornecedor(f = null) {
     document.getElementById('fornecedorNome').value = f.nome;
     document.getElementById('fornecedorCNPJ').value = f.cnpj;
     document.getElementById('fornecedorTelefone').value = f.telefone;
-
-    // Adaptação dos campos para a estrutura do BD
-    document.getElementById('fornecedorCEP').value = f.cep || ''; // Não existe no BD
-    document.getElementById('fornecedorLogradouro').value = f.logradouro || ''; // Mapeado para 'endereco'
-    document.getElementById('fornecedorNumero').value = f.numero || ''; // Não existe no BD
-    document.getElementById('fornecedorCidade').value = f.cidade || ''; // Não existe no BD
+    document.getElementById('fornecedorCEP').value = f.cep || '';
+    document.getElementById('fornecedorLogradouro').value = f.logradouro || '';
+    document.getElementById('fornecedorNumero').value = f.numero || '';
+    document.getElementById('fornecedorCidade').value = f.cidade || '';
     document.getElementById('fornecedorUF').value = f.uf || '';
     document.getElementById('fornecedorPais').value = f.pais || '';
   } else {
@@ -94,36 +96,37 @@ function abrirModalFornecedor(f = null) {
   }
 }
 
-async function abrirModalBebida(b = null) {
+function abrirModalBebida(b = null) {
   document.getElementById('modalBebida').style.display = 'block';
 
-  // Preenche o select de fornecedores (Sempre recarrega em caso de atualização)
-  await carregarDados(); // Recarrega fornecedores para garantir a lista mais atualizada
-  const select = document.getElementById('bebidaFornecedor');
-  select.innerHTML = '<option value="">Selecione um fornecedor</option>';
-  fornecedores.forEach(f => {
-    const opt = document.createElement('option');
-    opt.value = f.id;
-    opt.textContent = f.nome;
-    select.appendChild(opt);
+  // Preenche o select de fornecedores: Chama carregarDados() e usa .then()
+  carregarDados().then(() => {
+    const select = document.getElementById('bebidaFornecedor');
+    select.innerHTML = '<option value="">Selecione um fornecedor</option>';
+    fornecedores.forEach(f => {
+      const opt = document.createElement('option');
+      opt.value = f.id;
+      opt.textContent = f.nome;
+      select.appendChild(opt);
+    });
+
+    // Configuração do modal após o carregamento dos fornecedores
+    document.getElementById('bebidaId').value = b ? b.id : '';
+
+    if (b) {
+      document.getElementById('tituloBebida').innerText = 'Editar Bebida';
+      document.getElementById('bebidaNome').value = b.nome;
+      document.getElementById('bebidaQtde').value = b.qtde;
+      document.getElementById('bebidaPreco').value = b.preco;
+      document.getElementById('bebidaVolume').value = b.volume;
+      document.getElementById('bebidaMarca').value = b.marca;
+      select.value = b.id_fornecedor; // Seleciona o fornecedor correto
+    } else {
+      document.getElementById('tituloBebida').innerText = 'Nova Bebida';
+      document.querySelectorAll('#modalBebida input').forEach(i => i.value = '');
+      select.value = '';
+    }
   });
-
-  // Mantemos o campo hidden para a lógica de salvamento
-  document.getElementById('bebidaId').value = b ? b.id : '';
-
-  if (b) {
-    document.getElementById('tituloBebida').innerText = 'Editar Bebida';
-    document.getElementById('bebidaNome').value = b.nome;
-    document.getElementById('bebidaQtde').value = b.qtde;
-    document.getElementById('bebidaPreco').value = b.preco; // Usa 'preco'
-    document.getElementById('bebidaVolume').value = b.volume;
-    document.getElementById('bebidaMarca').value = b.marca;
-    document.getElementById('bebidaFornecedor').value = b.id_fornecedor; // Usa 'id_fornecedor'
-  } else {
-    document.getElementById('tituloBebida').innerText = 'Nova Bebida';
-    document.querySelectorAll('#modalBebida input').forEach(i => i.value = '');
-    select.value = '';
-  }
 }
 
 
@@ -131,15 +134,13 @@ function fecharModal(id) {
   document.getElementById(id).style.display = 'none';
 }
 
-// ==== SALVAR FORNECEDOR (POST/PUT) ====
-async function salvarFornecedor() {
+// ==== SALVAR FORNECEDOR (USANDO .THEN) ====
+function salvarFornecedor() {
   const id = document.getElementById('fornecedorId').value;
   const nome = document.getElementById('fornecedorNome').value;
   const cnpj = document.getElementById('fornecedorCNPJ').value;
   const telefone = document.getElementById('fornecedorTelefone').value;
-
-  // Mapeamento dos campos do frontend para a estrutura do banco de dados
-  const logradouro = document.getElementById('fornecedorLogradouro').value; // Mapeado para 'endereco'
+  const logradouro = document.getElementById('fornecedorLogradouro').value;
   const uf = document.getElementById('fornecedorUF').value;
   const pais = document.getElementById('fornecedorPais').value;
 
@@ -149,38 +150,37 @@ async function salvarFornecedor() {
     nome,
     cnpj,
     telefone,
-    endereco: logradouro, // Usando 'endereco' conforme a tabela MySQL
+    endereco: logradouro,
     uf,
     pais
-    // Ignorando CEP, Número e Cidade, pois não estão na tabela MySQL fornecida
   };
 
   let method = id ? 'PUT' : 'POST';
   let url = id ? `${API_BASE_URL}/fornecedores/${id}` : `${API_BASE_URL}/fornecedores`;
 
-  try {
-    const response = await fetch(url, {
-      method: method,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(dadosFornecedor)
+  fetch(url, {
+    method: method,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dadosFornecedor)
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Erro ao salvar fornecedor: ${response.statusText}`);
+      }
+      return response.json();
+    })
+    .then(() => {
+      fecharModal('modalFornecedor');
+      carregarDadosEExibirTabela(); // Recarrega os dados e atualiza a tabela
+    })
+    .catch(error => {
+      console.error('Erro:', error);
+      alert('Houve um erro ao salvar o fornecedor.');
     });
-
-    if (!response.ok) {
-      throw new Error(`Erro ao salvar fornecedor: ${response.statusText}`);
-    }
-
-    fecharModal('modalFornecedor');
-    await carregarDadosEExibirTabela(); // Recarrega os dados e atualiza a tabela
-  } catch (error) {
-    console.error('Erro:', error);
-    alert('Houve um erro ao salvar o fornecedor.');
-  }
 }
 
-// ==== SALVAR BEBIDA (POST/PUT) ====
-async function salvarBebida() {
+// ==== SALVAR BEBIDA (USANDO .THEN) ====
+function salvarBebida() {
   const id = document.getElementById('bebidaId').value;
   const nome = document.getElementById('bebidaNome').value;
   const qtde = document.getElementById('bebidaQtde').value;
@@ -191,44 +191,41 @@ async function salvarBebida() {
 
   if (!nome || !id_fornecedor) return alert('Preencha o nome e selecione o fornecedor!');
 
-  // Mapeamento dos campos do frontend para a estrutura do banco de dados
   const dadosBebida = {
-    beb_nome: nome, // 'beb_nome' é o nome no BD
+    beb_nome: nome,
     qtde: Number(qtde),
-    preco_uni: Number(preco), // 'preco_uni' é o nome no BD
+    preco_uni: Number(preco),
     volume: Number(volume),
     marca: marca,
-    forn_cod: Number(id_fornecedor) // 'forn_cod' é o nome no BD
-    // O tipo VARCHAR não está sendo usado no frontend
+    forn_cod: Number(id_fornecedor)
   };
 
   let method = id ? 'PUT' : 'POST';
-  // O endpoint PUT precisa do 'beb_cod' (que é o 'id' no frontend)
   let url = id ? `${API_BASE_URL}/bebidas/${id}` : `${API_BASE_URL}/bebidas`;
 
-  try {
-    const response = await fetch(url, {
-      method: method,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(dadosBebida)
+  fetch(url, {
+    method: method,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dadosBebida)
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Erro ao salvar bebida: ${response.statusText}`);
+      }
+      return response.json();
+    })
+    .then(() => {
+      fecharModal('modalBebida');
+      carregarDadosEExibirTabela(); // Recarrega os dados e atualiza a tabela
+    })
+    .catch(error => {
+      console.error('Erro:', error);
+      alert('Houve um erro ao salvar a bebida.');
     });
-
-    if (!response.ok) {
-      throw new Error(`Erro ao salvar bebida: ${response.statusText}`);
-    }
-
-    fecharModal('modalBebida');
-    await carregarDadosEExibirTabela(); // Recarrega os dados e atualiza a tabela
-  } catch (error) {
-    console.error('Erro:', error);
-    alert('Houve um erro ao salvar a bebida.');
-  }
 }
 
-// ==== EXCLUIR (DELETE) ====
-async function excluir(id, tipo) {
+// ==== EXCLUIR (USANDO .THEN) ====
+function excluir(id, tipo) {
   if (!confirm('Deseja realmente excluir?')) return;
 
   let url;
@@ -240,32 +237,31 @@ async function excluir(id, tipo) {
     return;
   }
 
-  try {
-    const response = await fetch(url, {
-      method: 'DELETE'
+  fetch(url, { method: 'DELETE' })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Erro ao excluir: ${response.statusText}`);
+      }
+      return response.text().then(text => text ? JSON.parse(text) : {}); // Lida com respostas vazias (204 No Content)
+    })
+    .then(() => {
+      carregarDadosEExibirTabela(); // Recarrega os dados e atualiza a tabela
+    })
+    .catch(error => {
+      console.error('Erro:', error);
+      alert('Houve um erro ao excluir o item.');
     });
-
-    if (!response.ok) {
-      throw new Error(`Erro ao excluir: ${response.statusText}`);
-    }
-
-    await carregarDadosEExibirTabela(); // Recarrega os dados e atualiza a tabela
-  } catch (error) {
-    console.error('Erro:', error);
-    alert('Houve um erro ao excluir o item.');
-  }
 }
 
 // ==== EXIBIR TABELAS ====
+// A lógica desta função não muda, pois ela depende apenas das variáveis globais 'bebidas' e 'fornecedores' já preenchidas.
 function exibirTabela() {
-  // Esta função agora usa as variáveis globais 'bebidas' e 'fornecedores' (já carregadas da API)
   const filtro = document.getElementById('filter').value;
   let html = "<table><thead><tr>";
 
   if (filtro === 'bebidas') {
     html += "<th>Nome</th><th>Qtde</th><th>Preço</th><th>Volume</th><th>Marca</th><th>Fornecedor</th><th>Ações</th></tr></thead><tbody>";
     bebidas.forEach(b => {
-      // É necessário encontrar o fornecedor pelo ID (id_fornecedor)
       const forn = fornecedores.find(f => f.id == b.id_fornecedor);
       html += `<tr>
         <td>${b.nome}</td><td>${b.qtde}</td>
@@ -277,7 +273,6 @@ function exibirTabela() {
       </tr>`;
     });
   } else if (filtro === 'fornecedores') {
-    // Campos CEP, Número, Cidade não existem na tabela MySQL. Usaremos o 'endereco' para Logradouro.
     html += "<th>Nome</th><th>CNPJ</th><th>Telefone</th><th>Logradouro</th><th>UF</th><th>País</th><th>Ações</th></tr></thead><tbody>";
     fornecedores.forEach(f => {
       html += `<tr>
@@ -291,7 +286,6 @@ function exibirTabela() {
       </tr>`;
     });
   } else {
-    // Tabela de resumo
     html += "<th>Nome Bebida</th><th>Marca</th><th>Fornecedor</th><th>Telefone</th></tr></thead><tbody>";
     bebidas.forEach(b => {
       const forn = fornecedores.find(f => f.id == b.id_fornecedor);
@@ -305,6 +299,3 @@ function exibirTabela() {
   html += "</tbody></table>";
   document.getElementById('tabelaContainer').innerHTML = html;
 }
-
-// O código de inicialização agora é 'carregarDadosEExibirTabela()' (acima)
-// exibirTabela(); // Removido, chamado dentro de carregarDadosEExibirTabela()

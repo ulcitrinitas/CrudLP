@@ -145,6 +145,7 @@ function salvarFornecedor() {
   const logradouro = document.getElementById('fornecedorLogradouro').value;
   const uf = document.getElementById('fornecedorUF').value;
   const pais = document.getElementById('fornecedorPais').value;
+  const email = document.getElementById('fornecedorEmail').value;
 
   if (!nome || !cnpj || !telefone || !uf) return alert('Preencha os campos obrigatórios: Nome, CNPJ, Telefone e UF!');
 
@@ -154,7 +155,8 @@ function salvarFornecedor() {
     telefone,
     endereco: logradouro,
     uf,
-    pais
+    pais,
+    email
   };
 
   let method = id ? 'PUT' : 'POST';

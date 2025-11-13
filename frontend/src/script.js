@@ -152,11 +152,11 @@ function salvarFornecedor() {
   const dadosFornecedor = {
     nome,
     cnpj,
+    email,
     telefone,
     endereco: logradouro,
-    uf,
     pais,
-    email
+    uf
   };
 
   let method = id ? 'PUT' : 'POST';

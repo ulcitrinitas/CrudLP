@@ -66,7 +66,8 @@ th {
   padding: 20px;
   border-radius: 8px;
   /* Largura ajustada para acomodar o Grid */
-  width: 500px;
+  width: 600px;
+  /* Aumentado ligeiramente para acomodar o grid de 4 colunas */
   position: relative;
 }
 
@@ -95,11 +96,11 @@ th {
 }
 
 
-/* NOVO: Estilos para o formulário com Grid Layout */
+/* NOVO: Estilos para o formulário com Grid Layout, agora com 4 colunas para agrupamento */
 .modal-content form {
   display: grid;
-  /* Define duas colunas: a primeira automática (para o label) e a segunda com ênfase no preenchimento (para o input) */
-  grid-template-columns: auto 1fr;
+  /* Define 4 colunas: Rótulo (auto), Campo 1 (1fr), Rótulo (auto), Campo 2 (1fr) */
+  grid-template-columns: auto 1fr auto 1fr;
   gap: 10px 15px;
   /* Espaçamento entre linhas e colunas */
   align-items: center;
@@ -107,7 +108,7 @@ th {
   margin-bottom: 15px;
 }
 
-/* Garante que os campos de entrada e seleção preencham a segunda coluna */
+/* Garante que os campos de entrada e seleção preencham a largura da coluna */
 .modal-content input,
 .modal-content select {
   width: 100%;
@@ -118,6 +119,105 @@ th {
   border-radius: 4px;
 }
 
+/* Regras de Layout Específicas para Modais */
+
+/* === Campos Lado a Lado (Fornecedor: CNPJ/Telefone, Bebida: Qtde/Preço e Volume/Tipo) === */
+
+/* Fornecedor: CNPJ/Telefone */
+.modal-content form label[for="fornecedorCNPJ"],
+.modal-content form #fornecedorCNPJ,
+.modal-content form label[for="fornecedorTelefone"],
+.modal-content form #fornecedorTelefone {
+  /* Define explicitamente onde cada item agrupado deve ficar no grid de 4 colunas */
+}
+
+.modal-content form label[for="fornecedorCNPJ"] {
+  grid-column: 1;
+  /* Rótulo 1 (Coluna 1) */
+}
+
+.modal-content form #fornecedorCNPJ {
+  grid-column: 2;
+  /* Input 1 (Coluna 2) */
+}
+
+.modal-content form label[for="fornecedorTelefone"] {
+  grid-column: 3;
+  /* Rótulo 2 (Coluna 3) */
+}
+
+.modal-content form #fornecedorTelefone {
+  grid-column: 4;
+  /* Input 2 (Coluna 4) */
+}
+
+
+/* Bebida: Quantidade/Preço */
+.modal-content form label[for="bebidaQtde"] {
+  grid-column: 1;
+}
+
+.modal-content form #bebidaQtde {
+  grid-column: 2;
+}
+
+.modal-content form label[for="bebidaPreco"] {
+  grid-column: 3;
+}
+
+.modal-content form #bebidaPreco {
+  grid-column: 4;
+}
+
+/* Bebida: Volume/Tipo */
+.modal-content form label[for="bebidaVolume"] {
+  grid-column: 1;
+}
+
+.modal-content form #bebidaVolume {
+  grid-column: 2;
+}
+
+.modal-content form label[for="bebidaTipo"] {
+  grid-column: 3;
+}
+
+.modal-content form #bebidaTipo {
+  grid-column: 4;
+}
+
+
+/* === Campos de Linha Inteira (Todos os outros que precisam ocupar as 4 colunas) === */
+
+.modal-content form label[for="fornecedorNome"],
+.modal-content form #fornecedorNome,
+.modal-content form label[for="fornecedorEmail"],
+.modal-content form #fornecedorEmail,
+.modal-content form label[for="bebidaNome"],
+.modal-content form #bebidaNome,
+.modal-content form label[for="bebidaMarca"],
+.modal-content form #bebidaMarca,
+.modal-content form label[for="bebidaFornecedor"],
+.modal-content form #bebidaFornecedor,
+.modal-content form label[for="fornecedorCEP"],
+.modal-content form #fornecedorCEP,
+.modal-content form label[for="fornecedorLogradouro"],
+.modal-content form #fornecedorLogradouro,
+.modal-content form label[for="fornecedorNumero"],
+.modal-content form #fornecedorNumero,
+.modal-content form label[for="fornecedorCidade"],
+.modal-content form #fornecedorCidade,
+.modal-content form label[for="fornecedorUF"],
+.modal-content form #fornecedorUF,
+.modal-content form label[for="fornecedorPais"],
+.modal-content form #fornecedorPais {
+  /* Faz com que o rótulo e o campo ocupem toda a largura (4 colunas), 
+       forçando o rótulo a ficar acima do campo para ter um visual mais limpo */
+  grid-column: 1 / span 4;
+  text-align: left;
+  /* Garante que o rótulo se alinhe à esquerda */
+}
+
 .modal-actions {
   display: flex;
   justify-content: flex-end;
@@ -125,12 +225,9 @@ th {
   margin-top: 15px;
 }
 
-/* Estilo para os botões de ação do modal (manterão a disposição padrão, mas podemos centralizar abaixo do grid) */
+/* Estilo para os botões de ação do modal */
 .modal-content button {
   /* Opcional: Para mover os botões para a parte de baixo, fora do grid, e centralizar */
   display: inline-block;
   margin-top: 10px;
 }
-
-/* Opcional: Alinhar o botão Salvar à esquerda e o Cancelar à direita do modal, ou apenas centralizar.
-   Aqui, vou mantê-los alinhados em baixo. */

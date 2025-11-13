@@ -47,6 +47,9 @@ export function fornVetor(req_body) {
     }
     else {
         for (const chave in req_body) {
+
+            console.log(`${chave} => ${req_body[chave]}`);
+
             v.push(req_body[chave]);
         }
     }

@@ -33,7 +33,7 @@ const info_bebidas = {
 
 const info_fornecedores = {
     nome: "Fornecedor",
-    campos: "nome, cnpj, email,  telefone, pais, endereco, uf"
+    campos: "nome, cnpj, email, telefone, endereco, pais, uf"
 };
 
 

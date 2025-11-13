@@ -189,6 +189,8 @@ function salvarBebida() {
   const marca = document.getElementById('bebidaMarca').value;
   const id_fornecedor = document.getElementById('bebidaFornecedor').value;
 
+  const tipo_bebida = document.getElementById('bebidaTipo').value;
+
   if (!nome || !id_fornecedor) return alert('Preencha o nome e selecione o fornecedor!');
 
   const dadosBebida = {
@@ -197,7 +199,8 @@ function salvarBebida() {
     preco_uni: Number(preco),
     volume: Number(volume),
     marca: marca,
-    forn_cod: Number(id_fornecedor)
+    forn_cod: Number(id_fornecedor),
+    tipo: tipo_bebida
   };
 
   let method = id ? 'PUT' : 'POST';
@@ -286,11 +289,16 @@ function exibirTabela() {
       </tr>`;
     });
   } else {
-    html += "<th>Nome Bebida</th><th>Marca</th><th>Fornecedor</th><th>Telefone</th></tr></thead><tbody>";
+    html += `<th>Nome Bebida</th>
+            <th>Marca</th>
+            <th>Fornecedor</th>
+            <th>Telefone</th>
+            <th>email</th>
+            </tr></thead><tbody>`;
     bebidas.forEach(b => {
       const forn = fornecedores.find(f => f.id == b.id_fornecedor);
       html += `<tr>
-        <td>${b.nome}</td><td>${b.marca}</td>
+    t    <td>${b.nome}</td><td>${b.marca}</td>
         <td>${forn ? forn.nome : 'N/A'}</td><td>${forn ? forn.telefone : '-'}</td>
       </tr>`;
     });
